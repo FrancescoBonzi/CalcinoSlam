@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS players (
 	id integer PRIMARY KEY AUTOINCREMENT,
-	name text NOT NULL UNIQUE,
+	username text NOT NULL UNIQUE,
+	password text DEFAULT 'versicalabresi',
 	image text,
 	sex text,
 	biography text,
@@ -17,7 +18,7 @@ CREATE TABLE IF NOT EXISTS championships (
 	name text,
 	location integer,
 	image text,
-	active integer NOT NULL,
+	in_progress integer NOT NULL,
 	season integer NOT NULL,
 	comment text,
 	CONSTRAINT fk_players
@@ -31,7 +32,8 @@ CREATE TABLE IF NOT EXISTS championships (
 CREATE TABLE IF NOT EXISTS locations (
 	id integer PRIMARY KEY AUTOINCREMENT,
 	name text NOT NULL UNIQUE,
-	image text
+	image text,
+	calcino_model text
 );
 
 CREATE TABLE IF NOT EXISTS matches (
@@ -41,27 +43,32 @@ CREATE TABLE IF NOT EXISTS matches (
 	team1_player2 integer NOT NULL,
 	team2_player1 integer NOT NULL,
 	team2_player2 integer NOT NULL,
-	team1_score integer NOT NULL,
-	team2_score integer NOT NULL,
+	to_be_played integer NOT NULL,
+	team1_score integer,
+	team2_score integer,
 	CONSTRAINT fk_players_team1_player1
     	FOREIGN KEY (team1_player1)
-    	REFERENCES players(id)
+    	REFERENCES players(id),
 	CONSTRAINT fk_players_team1_player2
     	FOREIGN KEY (team1_player2)
-    	REFERENCES players(id)
+    	REFERENCES players(id),
 	CONSTRAINT fk_players_team2_player1
     	FOREIGN KEY (team2_player1)
-    	REFERENCES players(id)
+    	REFERENCES players(id),
 	CONSTRAINT fk_players_team2_player2
     	FOREIGN KEY (team2_player2)
-    	REFERENCES players(id)
+    	REFERENCES players(id),
+	CHECK(to_be_played == 0 AND
+			team1_score IS NOT NULL AND
+			team2_score IS NOT NULL)
 );
 
 CREATE TABLE IF NOT EXISTS championships_matches (
 	id_championship integer NOT NULL,
 	id_match integer NOT NULL,
-	team1_points integer NOT NULL,
-	team2_points integer NOT NULL,
+	to_be_played integer NOT NULL
+	team1_points integer,
+	team2_points integer,
 	tournament text,
 	CONSTRAINT primary_keys PRIMARY KEY (id_championship, id_match),
 	CONSTRAINT fk_championships
@@ -69,7 +76,10 @@ CREATE TABLE IF NOT EXISTS championships_matches (
     	REFERENCES championships(id),
 	CONSTRAINT fk_matches
     	FOREIGN KEY (id_match)
-    	REFERENCES matches(id)
+    	REFERENCES matches(id),
+	CHECK(to_be_played == 0 AND
+			team1_points IS NOT NULL AND
+			team2_points IS NOT NULL)
 );
 
 CREATE TABLE IF NOT EXISTS championships_players (
