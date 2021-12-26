@@ -12,8 +12,10 @@ function error500(err, req, res, next) {
 }
 
 function create_championship(req, res, next) {
-    players = req.body
-    championship = await model.create_championship(players)
+    location = req.body.location
+    type = req.body.type
+    players = req.body.players
+    championship = await model.create_championship(location, type, players)
     // send back tournaments
     return 0
 }
