@@ -1,7 +1,6 @@
 var controller = require('./controller.js');
 var express = require('express');
 var bodyParser = require('body-parser');
-var hbs = require('express-handlebars').create();
 var sqlite3 = require('sqlite3').verbose();
 var fs = require('fs')
 
@@ -21,10 +20,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //set up dispatcher
 controller.dispatcher(app);
 
-//set up handlebars
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
-
 //create DB tables from sqlite file
 try {
   const db_instructions = fs.readFileSync('sqlite_db.sql', 'utf8')
@@ -37,6 +32,6 @@ try {
 
 //start server
 app.listen(app.get('port'), '127.0.0.1', function () {
-    console.log('UniboClendar started on http://127.0.0.1:' +
-        app.get('port') + '; press Ctrl-C to terminate.');
+  console.log('UniboClendar started on http://127.0.0.1:' +
+    app.get('port') + '; press Ctrl-C to terminate.');
 });

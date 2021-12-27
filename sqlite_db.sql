@@ -33,12 +33,12 @@ CREATE TABLE IF NOT EXISTS locations (
 	id integer PRIMARY KEY AUTOINCREMENT,
 	name text NOT NULL UNIQUE,
 	image text,
-	calcino_model text
+	comment text
 );
 
 CREATE TABLE IF NOT EXISTS matches (
 	id integer PRIMARY KEY AUTOINCREMENT,
-	datetime datetime NOT NULL,
+	datetime datetime,
 	team1_player1 integer NOT NULL,
 	team1_player2 integer NOT NULL,
 	team2_player1 integer NOT NULL,
@@ -58,18 +58,19 @@ CREATE TABLE IF NOT EXISTS matches (
 	CONSTRAINT fk_players_team2_player2
     	FOREIGN KEY (team2_player2)
     	REFERENCES players(id),
-	CHECK(to_be_played == 0 AND
+	CHECK((to_be_played == 0 AND
 			team1_score IS NOT NULL AND
-			team2_score IS NOT NULL)
+			team2_score IS NOT NULL) OR to_be_played == 1)
 );
 
 CREATE TABLE IF NOT EXISTS championships_matches (
 	id_championship integer NOT NULL,
 	id_match integer NOT NULL,
-	to_be_played integer NOT NULL
+	to_be_played integer NOT NULL,
 	team1_points integer,
 	team2_points integer,
-	tournament text,
+	parent_match1 integer,
+	parent_match2 integer,
 	CONSTRAINT primary_keys PRIMARY KEY (id_championship, id_match),
 	CONSTRAINT fk_championships
     	FOREIGN KEY (id_championship)
@@ -77,16 +78,22 @@ CREATE TABLE IF NOT EXISTS championships_matches (
 	CONSTRAINT fk_matches
     	FOREIGN KEY (id_match)
     	REFERENCES matches(id),
-	CHECK(to_be_played == 0 AND
+	CONSTRAINT fk_parent_match1
+    	FOREIGN KEY (parent_match1)
+    	REFERENCES matches(id),
+	CONSTRAINT fk_parent_match2
+    	FOREIGN KEY (parent_match2)
+    	REFERENCES matches(id),
+	CHECK((to_be_played == 0 AND
 			team1_points IS NOT NULL AND
-			team2_points IS NOT NULL)
+			team2_points IS NOT NULL) OR to_be_played == 1)
 );
 
 CREATE TABLE IF NOT EXISTS championships_players (
 	id_championship integer NOT NULL,
 	id_player integer NOT NULL,
-	place integer NOT NULL,
-	score float NOT NULL,
+	place integer,
+	score float,
 	CONSTRAINT primary_keys PRIMARY KEY (id_championship, id_player),
 	CONSTRAINT fk_championships
     	FOREIGN KEY (id_championship)
@@ -97,33 +104,49 @@ CREATE TABLE IF NOT EXISTS championships_players (
 );
 
 INSERT INTO players
-(id, name, image,  sex, biography, mail, address, city)
+(id, username, password, image, sex, biography, mail, address, city)
 VALUES
-(NULL, 'Checco', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Ale', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Fede', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Wilson', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Gambo', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Il Chimico', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Macca', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Gulli', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Gollo', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Cami', '/CalcinoSlam/images/player.png', 'F', NULL, NULL, NULL, NULL);
+(NULL, 'Checco', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Ale', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Fede', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Wilson', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Gambo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Il Chimico', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Macca', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Gulli', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Gollo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
+(NULL, 'Cami', 'versicalabresi', '/CalcinoSlam/images/player.png', 'F', NULL, NULL, NULL, NULL);
 
 INSERT INTO locations
-(id, name, image)
+(id, name, image, comment)
 VALUES
-(1, 'Bergullonia Alta', '/CalcinoSlam/images/location.png'),
-(2, 'Imola City Centre', '/CalcinoSlam/images/location.png');
+(1, 'Bergullonia Alta', '/CalcinoSlam/images/location.png', ''),
+(2, 'Imola City Centre', '/CalcinoSlam/images/location.png', '');
 
 INSERT INTO championships
-(id, type, date, organizer, name, location, image, active, season, comment)
+(id, type, date, organizer, name, location, image, in_progress, season, comment)
 VALUES
-(1, 'GIRONI', date('now'), 1, 'BIG SLAM 1', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
+(1, 'GIRONI', date('now'), 1, 'BIG SLAM 1', 1, '/CalcinoSlam/images/championship.png', 1, 1, NULL),
 (2, 'GIRONI', date('now'), 2, 'BIG SLAM 2', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
 (3, 'ELIMINAZIONE', date('now'), 1, 'BIG SLAM 3', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
 (4, 'ELIMINAZIONE', date('now'), 3, 'BIG SLAM 4', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
 (5, 'ELIMINAZIONE', date('now'), 3, 'BIG SLAM 6', 1, '/CalcinoSlam/images/championship.png', 1, 1, NULL);
+
+INSERT INTO matches
+(id, datetime, team1_player1, team1_player2, team2_player1, team2_player2, to_be_played, team1_score, team2_score)
+VALUES
+(NULL, NULL, 1, 2, 3, 4, 1, NULL, NULL),
+(NULL, NULL, 1, 2, 5, 6, 1, NULL, NULL),
+(NULL, NULL, 3, 4, 7, 8, 1, NULL, NULL),
+(NULL, NULL, 5, 6, 7, 8, 1, NULL, NULL);
+
+INSERT INTO championships_matches
+(id_championship, id_match, to_be_played, team1_points, team2_points, parent_match1, parent_match2)
+VALUES
+(1, 1, 1, NULL, NULL, NULL, NULL),
+(1, 2, 1, NULL, NULL, NULL, NULL),
+(1, 3, 1, NULL, NULL, NULL, NULL),
+(1, 4, 1, NULL, NULL, NULL, NULL);
 
 INSERT INTO championships_players
 (id_championship, id_player, place, score)
@@ -157,10 +180,3 @@ VALUES
 (4, 5, 6, 5),
 (4, 6, 7, 4),
 (4, 7, 8, 3);
-
--- classifica
-/*
-SELECT AVG(score)
-FROM championships_players
-GROUP BY id_player
-*/
