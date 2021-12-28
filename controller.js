@@ -85,6 +85,11 @@ async function update_match_result(req, res, next) {
     let team1_score = req.query.team1_score
     let team2_score = req.query.team2_score
     let success = await model.update_match_result(id_match, team1_score, team2_score)
+    // mando a championship_manager l'id del championship
+    // mando indietro: 1. continua a giocare le partite già previste
+    //                 2. ci sono nuove partite da giocare
+    //                 3. torneo finito
+    //                 + classifica parziale
     res.type("application/json")
     res.send(JSON.stringify(success))
 }

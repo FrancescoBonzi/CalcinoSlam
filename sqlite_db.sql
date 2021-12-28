@@ -69,20 +69,13 @@ CREATE TABLE IF NOT EXISTS championships_matches (
 	to_be_played integer NOT NULL,
 	team1_points integer,
 	team2_points integer,
-	parent_match1 integer,
-	parent_match2 integer,
+	id_noticeboard integer NOT NULL,
 	CONSTRAINT primary_keys PRIMARY KEY (id_championship, id_match),
 	CONSTRAINT fk_championships
     	FOREIGN KEY (id_championship)
     	REFERENCES championships(id),
 	CONSTRAINT fk_matches
     	FOREIGN KEY (id_match)
-    	REFERENCES matches(id),
-	CONSTRAINT fk_parent_match1
-    	FOREIGN KEY (parent_match1)
-    	REFERENCES matches(id),
-	CONSTRAINT fk_parent_match2
-    	FOREIGN KEY (parent_match2)
     	REFERENCES matches(id),
 	CHECK((to_be_played == 0 AND
 			team1_points IS NOT NULL AND
@@ -141,12 +134,12 @@ VALUES
 (NULL, NULL, 5, 6, 7, 8, 1, NULL, NULL);
 
 INSERT INTO championships_matches
-(id_championship, id_match, to_be_played, team1_points, team2_points, parent_match1, parent_match2)
+(id_championship, id_match, to_be_played, team1_points, team2_points, id_noticeboard)
 VALUES
-(1, 1, 1, NULL, NULL, NULL, NULL),
-(1, 2, 1, NULL, NULL, NULL, NULL),
-(1, 3, 1, NULL, NULL, NULL, NULL),
-(1, 4, 1, NULL, NULL, NULL, NULL);
+(1, 1, 1, NULL, NULL, 0),
+(1, 2, 1, NULL, NULL, 1),
+(1, 3, 1, NULL, NULL, 2),
+(1, 4, 1, NULL, NULL, 3);
 
 INSERT INTO championships_players
 (id_championship, id_player, place, score)

@@ -117,7 +117,7 @@ async function get_championship_info(id_championship) {
 }
 
 async function get_championship_matches(id_championship) {
-    let query = "SELECT id_match, team1_player1, team1_player2, team2_player1, team2_player2, matches.to_be_played, team1_score, team2_score, parent_match1, parent_match2 FROM championships_matches INNER JOIN matches ON championships_matches.id_match=matches.id WHERE id_championship==" + id_championship
+    let query = "SELECT id_match, team1_player1, team1_player2, team2_player1, team2_player2, matches.to_be_played, team1_score, team2_score, id_noticeboard FROM championships_matches INNER JOIN matches ON championships_matches.id_match=matches.id WHERE id_championship==" + id_championship
     let championship_matches = await db_all(query)
     let teams = new Set()
     for (let i = 0; i < championship_matches.length; i++) {
@@ -138,7 +138,7 @@ async function get_championship_matches(id_championship) {
             "team1": team1,
             "team2": team2,
             "score": [championship_matches[i]["team1_score"], championship_matches[i]["team2_score"]],
-            "parent_matches": [championship_matches[i]["parent_match1"], championship_matches[i]["parent_match2"]]
+            "id_noticeboard": championship_matches[i]["id_noticeboard"]
         })
     }
     return {
