@@ -65,7 +65,10 @@ async function create_championship(location, type, id_player, organizer, name, c
     } else if (type == "ELIMINAZIONE") {
         throw "Not supported yet"
     } else {
-        throw "Championship type not supported"
+        return {
+            "ok": false,
+            "error": "championship type not supported"
+        }
     }
 
     //championship
