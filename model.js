@@ -54,7 +54,7 @@ async function create_championship(location, type, id_player, organizer, name, c
     //create teams
     let teams = create_teams(id_player)
 
-    //create matches to play right now
+    //create matches to play right now DA MODIFICARE
     let matches = []
     if (type == "GIRONE") {
         for (let i = 0; i < teams.length; i++) {
@@ -77,26 +77,6 @@ async function create_championship(location, type, id_player, organizer, name, c
     var [id_championship, _] = await db_run(insert_championship_query, [null, type, get_current_timestamp(), organizer, name, location, 'images/championships/default.png', 1, 1, comment])
     let update_championship_query = "UPDATE championships SET image = 'images/championships/" + id_championship + ".png' WHERE id==" + id_championship
     await db_run(update_championship_query, [])
-
-    //matches
-    let insert_matches_query = "INSERT INTO matches (id, datetime, team1_player1, team1_player2, team2_player1, team2_player2, to_be_played, team1_score, team2_score) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
-    let id_matches = []
-    for (let i = 0; i < matches.length; i++) {
-        var team1_player1 = teams[matches[i][0]][0]
-        var team1_player2 = teams[matches[i][0]][1]
-        var team2_player1 = teams[matches[i][1]][0]
-        var team2_player2 = teams[matches[i][1]][1]
-        var [id_match, _] = await db_run(insert_matches_query, [null, null, team1_player1, team1_player2, team2_player1, team2_player2, 1, null, null])
-        id_matches += [id_match]
-    }
-
-    //championships_matches
-    let insert_championships_matches_query = "INSERT INTO championships_matches (id_championship, id_match, to_be_played, team1_points, team2_points, parent_match1, parent_match2) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?);"
-    for (let i = 0; i < matches.length; i++) {
-        await db_run(insert_championships_matches_query, [id_championship, id_matches[i], 1, null, null, null, null])
-    }
 
     //championships_players
     let insert_championships_players_query = "INSERT INTO championships_players (id_championship, id_player, place, score) " +
