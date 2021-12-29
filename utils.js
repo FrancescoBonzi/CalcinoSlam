@@ -1,4 +1,47 @@
 const model = require('./model.js')
+const sqlite3 = require('sqlite3').verbose();
+const db_file = "data.db"
+
+/********************************************************************
+***                                                               ***
+*** utils functions to perform operation on db                    ***
+***                                                               ***
+********************************************************************/
+
+function get_key_by_value(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+}
+
+function get_current_timestamp() {
+    var d = new Date();
+    d = new Date(d.getTime() - 3000000);
+    var date_format_str = d.getFullYear().toString()+"-"+((d.getMonth()+1).toString().length==2?(d.getMonth()+1).toString():"0"+(d.getMonth()+1).toString())+"-"+(d.getDate().toString().length==2?d.getDate().toString():"0"+d.getDate().toString())+" "+(d.getHours().toString().length==2?d.getHours().toString():"0"+d.getHours().toString())+":"+((parseInt(d.getMinutes()/5)*5).toString().length==2?(parseInt(d.getMinutes()/5)*5).toString():"0"+(parseInt(d.getMinutes()/5)*5).toString())+":00";
+    //console.log(date_format_str);
+    return date_format_str
+}
+
+async function db_all(query) {
+    return new Promise(function (resolve, reject) {
+        let db = new sqlite3.Database(db_file)
+        db.all(query, function (err, rows) {
+            if (err) { return reject(err) }
+            resolve(rows)
+        })
+        db.close()
+    });
+}
+
+async function db_run(query, params) {
+    return new Promise(function (resolve, reject) {
+        let db = new sqlite3.Database(db_file)
+        db.run(query, params, function (err) {
+            if (err) { return reject(err) }
+            //console.log(this.lastID, this.changes)
+            resolve([this.lastID, this.changes])
+        })
+        db.close()
+    });
+}
 
 /********************************************************************
 ***                                                               ***
@@ -275,7 +318,7 @@ async function chart_manager(id_championship) {
     }
     let details = model.get_championship_details(id_championship)
     if (details.type == "GIRONE") {
-        let 
+        let query = "SELECT SUM(1) FROM championships_matches INNER JOIN matches ON championships_matches.id_match = matches.id WHERE (id_championship==? AND (team1_player1==? AND team1_points==1) OR (team2_player1==? AND team2_points==1))"
 
     }
 
@@ -284,10 +327,9 @@ async function chart_manager(id_championship) {
     return result
 }
 
-
-
-
-
-
+module.exports.get_current_timestamp = get_current_timestamp;
+module.exports.get_key_by_value = get_key_by_value;
+module.exports.db_all = db_all;
+module.exports.db_run = db_run;
 module.exports.championship_manager = championship_manager;
 module.exports.chart_manager = chart_manager;
