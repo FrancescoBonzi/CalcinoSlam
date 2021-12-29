@@ -138,16 +138,19 @@ function manager_case_5teams(details) {
         case 2:
             let match1 = match_chart(details.matches[1])
             new_matches.push([match1.winner, 4])
+            break
         case 3:
             let match0 = match_chart(details.matches[0])
             let match2 = match_chart(details.matches[2])
             new_matches.push([match0.winner, match2.winner])
+            break
         case 4:
             let match2bis = match_chart(details.matches[2])
             let match3 = match_chart(details.matches[3])
             if (match2.winner == match3.winner) {
                 new_matches.push([match3.loser, match2bis.loser])
             }
+            break
     }
     return new_matches
 }
@@ -172,10 +175,12 @@ function manager_case_6teams(details) {
             let match0 = match_chart(details.matches[0])
             let match1 = match_chart(details.matches[1])
             new_matches.push([match0.winner, match1.winner])
+            break
         case 4:
             let match2 = match_chart(details.matches[2])
             let match3 = match_chart(details.matches[3])
             new_matches.push([match2.winner, match3.winner])
+            break
         case 5:
             let match2bis = match_chart(details.matches[2])
             let match4 = match_chart(details.matches[4])
@@ -184,6 +189,7 @@ function manager_case_6teams(details) {
                 let match = match_chart(details.matches[parent_match])
                 new_matches.push([match.winner, match2bis.winner])
             }
+            break
     }
     return new_matches
 }
@@ -197,10 +203,12 @@ function manager_case_7teams(details) {
             let match2 = match_chart(details.matches[2])
             new_matches.push([match0.winner, match1.winner])
             new_matches.push([match2.winner, 6])
+            break
         case 5:
             let match3 = match_chart(details.matches[3])
             let match4 = match_chart(details.matches[4])
             new_matches.push([match3.winner, match4.winner])
+            break
         case 6:
             let match4bis = match_chart(details.matches[4])
             if (match4bis.winner == 6) {
@@ -216,6 +224,7 @@ function manager_case_7teams(details) {
                     new_matches.push([match.winner, 6])
                 }
             }
+            break
     }
     return new_matches
 }
@@ -230,11 +239,13 @@ function manager_case_8teams(details) {
             let match3 = match_chart(details.matches[3])
             new_matches.push([match0.winner, match1.winner])
             new_matches.push([match2.winner, match3.winner])
+            break
         case 6:
             let match4 = match_chart(details.matches[4])
             let match5 = match_chart(details.matches[5])
             new_matches.push([match4.winner, match5.winner])
             new_matches.push([match4.loser, match5.loser])
+            break
     }
     return new_matches
 }
@@ -253,13 +264,13 @@ async function chart_manager(id_championship) {
             "id_players": [1, 2],
             "id_team": 1,
             "final_position": 1,
-            "final score": 45
+            "final_score": 45
         },
         {
             "id_players": [1, 2],
             "id_team": 1,
             "final_position": 1,
-            "final score": 45
+            "final_score": 45
         }]
     }
     let details = model.get_championship_details(id_championship)
