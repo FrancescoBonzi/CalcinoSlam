@@ -11,20 +11,20 @@ const db_file = "data.db"
 ***                                                                                                 ***
 ******************************************************************************************************/
 
-let legend_points_girone = [ 
-    [80, 70, 45],
-    [85, 70, 60, 45],
-    [90, 75, 65, 55, 40],
-    [100, 85, 70, 60, 50, 40]
-]
+let legend_girone = {
+    "three": [80, 70, 45],
+    "four": [85, 70, 60, 45],
+    "five": [90, 75, 65, 55, 40],
+    "six": [100, 85, 70, 60, 50, 40]
+}
 
-let legend_points_eliminazione = [
-    [85, 70, 60, 45],
-    [90, 80, 65, 45, 45],
-    [95, 85, 75, 45, 45, 45],
-    [100, 90, 75, 60, 45, 45, 45],
-    [110, 95, 80, 65, 45, 45, 45, 45]
-]
+let legend_elimin = {
+    "four": [85, 70, 60, 45],
+    "five": [90, 80, 65, 45, 45],
+    "six": [95, 85, 75, 45, 45, 45],
+    "seven": [100, 90, 75, 60, 45, 45, 45],
+    "eight": [110, 95, 80, 65, 45, 45, 45, 45]
+}
 
 /********************************************************************
 ***                                                               ***
@@ -394,7 +394,7 @@ function final_chart_girone(won_matches, details) {
             "points": 0
         })
         var score_team = won_matches.find(o => o.id_team == team).final_score
-        var comp = 1
+        var comp = team + 1
         var draw = 0 //how many teams are in a draw with the choosen one
         while (comp < details.num_teams) {
             var score_comp = won_matches.find(o => o.id_team == won_matches[comp].id_team).final_score
@@ -426,7 +426,7 @@ function final_chart_girone(won_matches, details) {
             final_chart[loser_index].final_position = team + 1
             final_chart[loser_index].points = legend_points[team + 1]
         }else if (draw >= 2){//all the teams in the the draw get same position and points
-            let draw_points = sum_interval(legend_points, team, team+draw, 1) / (draw + 1)
+            let draw_points = Math.floor(sum_interval(legend_points, team, team+draw, 1) / (draw + 1))
             for (let i=0; i<draw+1; i++){
                 final_chart[team + i].points = draw_points
             }
@@ -451,7 +451,7 @@ function final_chart_elim_4(details) {
     final_chart.push({
         "id_team": match2.winner,
         "final_position": 0,
-        "points": legend_points_eliminazione[0]
+        "points": legend_points_eliminazione[0][0]
     })
     final_chart.push({
         "id_team": match2.loser,
