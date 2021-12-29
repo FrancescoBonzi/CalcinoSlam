@@ -1,8 +1,15 @@
 const model = require('./model.js')
 
+/********************************************************************
+***                                                               ***
+*** championship_manager: function that creates the new matches   ***
+*** that have to be played                                        ***
+***                                                               ***
+********************************************************************/
+
 async function championship_manager(id_championship) {
 
-    let details = await model.get_championship_details(id.championship)
+    let details = await model.get_championship_details(id_championship)
     let result = {
         "championship_approved": false,
         "new_matches": false,
@@ -72,9 +79,9 @@ async function championship_manager(id_championship) {
                             break
                     }
                 }
-                if (new_matches.length == 0){
+                if (new_matches.length == 0) {
                     result.championship_end = true
-                }else{
+                } else {
                     result.new_matches = true
                 }
 
@@ -138,15 +145,15 @@ function manager_case_5teams(details) {
         case 4:
             let match2 = match_chart(details.matches[2])
             let match3 = match_chart(details.matches[3])
-            if (match2.winner == match3.winner){
+            if (match2.winner == match3.winner) {
                 new_matches.push([match3.loser, match2.loser])
             }
     }
     return new_matches
 }
 
-function parent_match_standardtree(winner){     //returns id_noticeboard of the match (within the first round) in which
-                                                //the "winner" was NOT present
+function parent_match_standardtree(winner) {     //returns id_noticeboard of the match (within the first round) in which
+    //the "winner" was NOT present
     /*
     if (Math.floor(winner/2) > 0){
         return 0
@@ -155,7 +162,7 @@ function parent_match_standardtree(winner){     //returns id_noticeboard of the 
     }
     */
 
-    return Math.floor(winner/2) > 0 ? 0 : 1
+    return Math.floor(winner / 2) > 0 ? 0 : 1
 }
 
 function manager_case_6teams(details) {
@@ -172,7 +179,7 @@ function manager_case_6teams(details) {
         case 5:
             let match2 = match_chart(details.matches[2])
             let match4 = match_chart(details.matches[4])
-            if (match2.winner != match4.winner){
+            if (match2.winner != match4.winner) {
                 let parent_match = parent_match_standardtree(match4.winner)
                 let match = match_chart(details.matches[parent_match])
                 new_matches.push([match.winner, match2.winner])
@@ -196,14 +203,14 @@ function manager_case_7teams(details) {
             new_matches.push([match3.winner, match4.winner])
         case 6:
             let match4 = match_chart(details.matches[4])
-            if (match4.winner == 6){
+            if (match4.winner == 6) {
                 let match5 = match_chart(details.matches[5])
-                if (match5.winner == 6){
+                if (match5.winner == 6) {
                     let match2 = match_chart(details.matches[2])
                     let parent_match = parent_match_standardtree(match5.loser)
                     let match = match_chart(details.matches[parent_match])
                     new_matches.push([match2.winner, match.winner])
-                }else{
+                } else {
                     let parent_match = parent_match_standardtree(match5.winner)
                     let match = match_chart(details.matches[parent_match])
                     new_matches.push([match.winner, 6])
@@ -232,4 +239,44 @@ function manager_case_8teams(details) {
     return new_matches
 }
 
+
+/********************************************************************
+***                                                               ***
+*** chart_manager: function that returns the final                ***
+*** chart of a championship when all the matches have been played ***
+***                                                               ***
+********************************************************************/
+
+async function chart_manager(id_championship) {
+    let result = {
+        "chart": [{
+            "id_players": [1, 2],
+            "id_team": 1,
+            "final_position": 1,
+            "final score": 45
+        },
+        {
+            "id_players": [1, 2],
+            "id_team": 1,
+            "final_position": 1,
+            "final score": 45
+        }]
+    }
+    let details = model.get_championship_details(id_championship)
+    if (details.type == "GIRONE") {
+        let 
+
+    }
+    
+    //to do: inserire nel database in championship_players place & score
+
+    return result
+}
+
+
+
+
+
+
 module.exports.championship_manager = championship_manager;
+module.exports.chart_manager = chart_manager;

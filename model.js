@@ -169,7 +169,7 @@ async function get_championships_in_progress(id_player) {
     return championships
 }
 
-async function get_charts(id_players) {
+async function get_chart(id_players) {
     let query = "SELECT id_player, username, image, AVG(score) AS score FROM championships_players INNER JOIN players ON id_player = id"
     if(id_players.length != 0) {
         query += " WHERE "
@@ -215,7 +215,7 @@ async function login(id_player, password) {
 module.exports.get_players = get_players;
 module.exports.get_locations = get_locations;
 module.exports.get_championships_in_progress = get_championships_in_progress;
-module.exports.get_charts = get_charts;
+module.exports.get_chart = get_chart;
 module.exports.create_championship = create_championship;
 module.exports.get_championship_info = get_championship_info;
 module.exports.get_championship_matches = get_championship_matches;
