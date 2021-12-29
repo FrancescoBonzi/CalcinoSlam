@@ -1,0 +1,5 @@
+export default [
+    { "id": 1, "image": require('./assets/laurel.png'), "username": "Checco", "biography": "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur."},
+    { "id": 2, "image": require('./assets/laurel.png'), "username": "Ale", "biography": "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur."},
+    { "id": 3, "image": require('./assets/laurel.png'), "username": "Fede", "biography": "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur."}
+]
