@@ -1,3 +1,4 @@
+const { championship_manager } = require('./utils.js');
 const model = require('./model.js');
 
 function error404(req, res, next) {
@@ -80,38 +81,43 @@ async function get_championship_details(req, res, next) {
     res.send(JSON.stringify(details))
 }
 
-async function update_match_result(req, res, next) {
+async function update_championship_status(req, res, next) {
     let id_match = req.query.id_match
+    let id_championship = req.query.id_championship
     let team1_score = req.query.team1_score
     let team2_score = req.query.team2_score
-    let success = await model.update_match_result(id_match, team1_score, team2_score)
-    // mando a championship_manager l'id del championship
-    // mando indietro: 1. continua a giocare le partite già previste
-    //                 2. ci sono nuove partite da giocare
-    //                 3. torneo finito
-    //                 + classifica parziale
+    let _ = await model.update_match_result(id_match, team1_score, team2_score)
+    let championship_status = utils.championship_manager(id_championship)
     res.type("application/json")
-    res.send(JSON.stringify(success))
+    res.send(JSON.stringify(championship_status))
 }
 
-async function get_charts(req, res, next) {
+async function get_chart(req, res, next) {
     id_players = req.body.id_players
-    let charts = await model.get_charts(id_players)
+    let chart = await model.get_chart(id_players)
     res.type("application/json")
-    res.send(JSON.stringify(charts))
+    res.send(JSON.stringify(chart))
+}
+
+async function get_championship_chart(req, res, next){
+    let id_championship = req.query.id_championship
+    let chart = await utils.chart_manager(id_championship)
+    res.type("application/json")
+    res.send(JSON.stringify(chart))
 }
 
 exports.dispatcher = function (app) {
     app.post('/create_championship', create_championship)
     app.post('/get_players', get_players)
     app.post('/get_locations', get_locations)
-    app.post('/get_charts', get_charts)
+    app.post('/get_chart', get_chart)
     app.post('/login', login)
     app.get('/get_championships_in_progress', get_championships_in_progress)
     app.get('/get_championship_info', get_championship_info)
     app.get('/get_championship_matches', get_championship_matches)
     app.get('/get_championship_details', get_championship_details)
-    app.get('/update_match_result', update_match_result)
+    app.get('/update_championship_status', update_championship_status)
+    app.get('/get_championship_chart', get_championship_chart)
     app.use(error404) // 404 catch-all handler (middleware)
     app.use(error500) // 500 error handler (middleware)
 }
