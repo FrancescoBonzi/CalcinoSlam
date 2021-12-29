@@ -143,10 +143,10 @@ function manager_case_5teams(details) {
             let match2 = match_chart(details.matches[2])
             new_matches.push([match0.winner, match2.winner])
         case 4:
-            let match2 = match_chart(details.matches[2])
+            let match2bis = match_chart(details.matches[2])
             let match3 = match_chart(details.matches[3])
             if (match2.winner == match3.winner) {
-                new_matches.push([match3.loser, match2.loser])
+                new_matches.push([match3.loser, match2bis.loser])
             }
     }
     return new_matches
@@ -177,12 +177,12 @@ function manager_case_6teams(details) {
             let match3 = match_chart(details.matches[3])
             new_matches.push([match2.winner, match3.winner])
         case 5:
-            let match2 = match_chart(details.matches[2])
+            let match2bis = match_chart(details.matches[2])
             let match4 = match_chart(details.matches[4])
-            if (match2.winner != match4.winner) {
+            if (match2bis.winner != match4.winner) {
                 let parent_match = parent_match_standardtree(match4.winner)
                 let match = match_chart(details.matches[parent_match])
-                new_matches.push([match.winner, match2.winner])
+                new_matches.push([match.winner, match2bis.winner])
             }
     }
     return new_matches
@@ -202,14 +202,14 @@ function manager_case_7teams(details) {
             let match4 = match_chart(details.matches[4])
             new_matches.push([match3.winner, match4.winner])
         case 6:
-            let match4 = match_chart(details.matches[4])
-            if (match4.winner == 6) {
+            let match4bis = match_chart(details.matches[4])
+            if (match4bis.winner == 6) {
                 let match5 = match_chart(details.matches[5])
                 if (match5.winner == 6) {
-                    let match2 = match_chart(details.matches[2])
+                    let match2bis = match_chart(details.matches[2])
                     let parent_match = parent_match_standardtree(match5.loser)
                     let match = match_chart(details.matches[parent_match])
-                    new_matches.push([match2.winner, match.winner])
+                    new_matches.push([match2bis.winner, match.winner])
                 } else {
                     let parent_match = parent_match_standardtree(match5.winner)
                     let match = match_chart(details.matches[parent_match])
@@ -267,7 +267,7 @@ async function chart_manager(id_championship) {
         let 
 
     }
-    
+
     //to do: inserire nel database in championship_players place & score
 
     return result
