@@ -367,7 +367,7 @@ async function chart_manager(id_championship) {
     //to do: inserire nel database in championship_players place & score
 }
 
-function count_won_matches(id_championship, details) {
+async function count_won_matches(id_championship, details) {
     let won_matches = [] //in place i there is the number of won matches of team i
     for (let i = 0; i < details.num_teams; i++) {
         var id_player = details.teams[i][0]

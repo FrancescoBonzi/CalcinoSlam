@@ -12,6 +12,7 @@ app.set('port', process.env.PORT || 3003);
 
 //set up static folder
 app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/images'));
 
 //set body-parser to read post request data
 app.use(bodyParser.json());

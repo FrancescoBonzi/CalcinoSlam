@@ -99,16 +99,16 @@ CREATE TABLE IF NOT EXISTS championships_players (
 INSERT INTO players
 (id, username, password, image, sex, biography, mail, address, city)
 VALUES
-(NULL, 'Checco', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Ale', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Fede', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Wilson', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Gambo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Il Chimico', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Macca', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Gulli', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Gollo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', NULL, NULL, NULL, NULL),
-(NULL, 'Cami', 'versicalabresi', '/CalcinoSlam/images/player.png', 'F', NULL, NULL, NULL, NULL);
+(NULL, 'Checco', 'versicalabresi', '../assets/laurel.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Ale', 'versicalabresi', "require('../assets/laurel.png')", 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Fede', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Wilson', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Gambo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Il Chimico', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Macca', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Gulli', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Gollo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Cami', 'versicalabresi', '/CalcinoSlam/images/player.png', 'F', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL);
 
 INSERT INTO locations
 (id, name, image, comment)
