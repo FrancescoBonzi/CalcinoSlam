@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-export default function OnboardingItem({item}) {
+export default function PlayersItem({item}) {
   const {width} = useWindowDimensions();
   console.log(item);
   return (

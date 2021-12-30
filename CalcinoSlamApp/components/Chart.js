@@ -6,24 +6,15 @@ import {
   FlatList,
   Animated,
 } from 'react-native';
-import PlayersItem from './PlayersItem';
-import Paginator from './Paginator';
+import ChartItem from './ChartItem';
 
 export default function Onboarding({navigation}) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const slidesRef = useRef(null);
-
-  const viewableItemsChanged = useRef(({viewableItems}) => {
-    setCurrentIndex(viewableItems[0].index);
-  }).current;
-
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
-  const getPlayers = async () => {
+  const getChart = async () => {
     try {
-      const response = await fetch('http://localhost:3003/get_players', {
+      const response = await fetch('http://localhost:3003/get_chart', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -34,6 +25,9 @@ export default function Onboarding({navigation}) {
         }),
       });
       const json = await response.json();
+      json.map((_, i) => {
+        json[i].score = json[i].score.toFixed(1);
+      });
       setData(json);
     } catch (error) {
       console.error(error);
@@ -43,7 +37,7 @@ export default function Onboarding({navigation}) {
   };
 
   useEffect(() => {
-    getPlayers();
+    getChart();
   }, []);
 
   return (
@@ -55,24 +49,12 @@ export default function Onboarding({navigation}) {
           <View style={{}}>
             <FlatList
               data={data}
-              renderItem={({item}) => <PlayersItem item={item} />}
-              horizontal
+              renderItem={({item}) => <ChartItem item={item} />}
               pagingEnabled
               //bounces={false}
               keyExtractor={item => item.id}
-              onScroll={Animated.event(
-                [{nativeEvent: {contentOffset: {x: scrollX}}}],
-                {
-                  useNativeDriver: false,
-                },
-              )}
-              scrollEventThrottle={32}
-              onViewableItemsChanged={viewableItemsChanged}
-              ref={slidesRef}
-              showsHorizontalScrollIndicator={false}
             />
           </View>
-          <Paginator data={data} scrollX={scrollX} />
         </>
       )}
     </View>
