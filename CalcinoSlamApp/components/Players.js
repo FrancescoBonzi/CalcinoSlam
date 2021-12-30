@@ -6,10 +6,10 @@ import {
   FlatList,
   Animated,
 } from 'react-native';
-import OnboardingItem from '../components/OnboardingItem';
-import Paginator from '../components/Paginator';
+import OnboardingItem from './PlayersItem';
+import Paginator from './Paginator';
 
-export default function Onboarding() {
+export default function Onboarding({navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef(null);
