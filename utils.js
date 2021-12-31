@@ -74,7 +74,6 @@ async function db_run(query, params) {
 ********************************************************************/
 
 async function championship_manager(id_championship) {
-
     let details = await model.get_championship_details(id_championship)
     let result = {
         "championship_approved": false,
@@ -83,12 +82,11 @@ async function championship_manager(id_championship) {
         "partial_chart": null
     }
     let new_matches = []
-
     if (details.type == "GIRONE") {
         if (details.num_teams >= 3 && details.num_teams <= 6) {
             result.championship_approved = true
-
             if (details.matches.length == 0) {
+                
                 for (let i = 0; i < details.num_teams; i++) {
                     for (let j = i + 1; j < details.num_teams; j++) {
                         new_matches.push([i, j])
@@ -96,7 +94,6 @@ async function championship_manager(id_championship) {
                 }
                 result.new_matches = true
             }
-
             let all_played = true
             for (let i = 0; i <= details.matches.length; i++) {
                 if (details.matches[i].score[0] == null) {
@@ -106,7 +103,6 @@ async function championship_manager(id_championship) {
             }
             result.championship_end = all_played
         }
-
     } else if (details.type == "ELIMINAZIONE") {
         if (details.num_teams >= 4 && details.num_teams <= 8) {
             result.championship_approved = true
@@ -370,8 +366,11 @@ async function chart_manager(id_championship) {
             "final_score": final_chart[i].points
         })
     }
+    let update_championship_players = "UPDATE championships_players SET place = " + result.final_position + ", score = " + result.final_score + " WHERE id_championship==" + id_championship +  " (id_player==" + result.id_players[0] + " OR id_player==" + result.id_players[1] + ");"
+    let update_championship_end = "UPDATE championships SET in_progress = 0 WHERE id==" + id_championship + ";"
+    await db_run(update_championship_players, [])
+    await db_run(update_championship_end, [])
     return result
-    //to do: inserire nel database in championship_players place & score
 }
 
 async function count_won_matches(id_championship, details) {
