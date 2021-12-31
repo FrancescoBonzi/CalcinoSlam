@@ -153,15 +153,13 @@ async function championship_manager(id_championship) {
     }
 
     //matches
-    let insert_matches_query = "INSERT INTO matches (id, datetime, team1_player1, team1_player2, team2_player1, team2_player2, to_be_played, team1_score, team2_score) " +
+    let insert_matches_query = "INSERT INTO matches (id, datetime, team1, team2, to_be_played, team1_score, team2_score) " +
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
     let id_matches = []
     for (let i = 0; i < new_matches.length; i++) {
-        var team1_player1 = teams[new_matches[i][0]][0]
-        var team1_player2 = teams[new_matches[i][0]][1]
-        var team2_player1 = teams[new_matches[i][1]][0]
-        var team2_player2 = teams[new_matches[i][1]][1]
-        var [id_match, _] = await db_run(insert_matches_query, [null, null, team1_player1, team1_player2, team2_player1, team2_player2, 1, null, null])
+        var team1 = new_matches[i][0]
+        var team2 = new_matches[i][1]
+        var [id_match, _] = await db_run(insert_matches_query, [null, null, team1, team2, 1, null, null])
         id_matches += [id_match]
     }
 
@@ -376,12 +374,12 @@ async function chart_manager(id_championship) {
 async function count_won_matches(id_championship, details) {
     let won_matches = [] //in place i there is the number of won matches of team i
     for (let i = 0; i < details.num_teams; i++) {
-        var id_player = details.teams[i][0]
-        var query = "SELECT SUM(1) AS final_score FROM championships_matches INNER JOIN matches ON championships_matches.id_match = matches.id WHERE (id_championship==" + id_championship + " AND ((team1_player1==" + id_player + " OR team1_player2==" + id_player + ") AND team1_points==1) OR ((team2_player1==" + id_player + " OR team2_player2==" + id_player + ") AND team2_points==1))"
-        var won_matches_player = await db_all(query)
+        var query = "SELECT SUM(1) AS final_score FROM championships_matches INNER JOIN matches ON championships_matches.id_match = matches.id WHERE (id_championship==" + id_championship + " AND " + 
+            "(team1==" + i + " AND team1_points==1) OR (team2==" + i + " AND team2_points==1))"
+        var won_matches_team = await db_all(query)
         won_matches.push({
             "id_team": i,
-            "final_score": won_matches_player[0].final_score
+            "final_score": won_matches_team[0].final_score
         })
     }
     return won_matches

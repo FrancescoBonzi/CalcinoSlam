@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Button,
-  Alert,
-  Text,
-  StyleSheet,
-  Image,
-  useWindowDimensions,
-} from 'react-native';
+import {View, Text, StyleSheet, Image, useWindowDimensions} from 'react-native';
 
 export default function ChartItem({item}) {
   const {width} = useWindowDimensions();
@@ -19,7 +11,7 @@ export default function ChartItem({item}) {
           uri: item.image,
         }}
       />
-      <View style={{flexDirection: 'column'}}>
+      <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.type}>{item.type}</Text>
       </View>
@@ -42,6 +34,9 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginTop: 7.5,
+  },
+  info: {
+    flexDirection: 'column',
   },
   name: {
     fontWeight: '600',

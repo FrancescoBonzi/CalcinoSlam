@@ -15,43 +15,44 @@ function create_teams(id_player) {
 }
 
 async function create_championship(location, type, id_player, organizer, name, comment) {
-    //create teams
-    let teams = create_teams(id_player)
 
-    //create matches to play right now DA MODIFICARE
-    let matches = []
-    if (type == "GIRONE") {
-        for (let i = 0; i < teams.length; i++) {
-            for (let j = i + 1; j < teams.length; j++) {
-                matches.push([i, j])
-            }
-        }
-    } else if (type == "ELIMINAZIONE") {
-        throw "Not supported yet"
-    } else {
-        return {
+    let result
+
+    //check parameters
+    if ((type != "GIRONE" && type != "ELIMINAZIONE") ||
+        (id_player.length % 2 == 1)) {
+        result = {
             "ok": false,
             "error": "championship type not supported"
         }
+    } else {
+
+        //championship
+        let insert_championship_query = "INSERT INTO championships (id, type, date, organizer, name, location, image, in_progress, season, comment) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        var [id_championship, _] = await utils.db_run(insert_championship_query, [null, type, utils.get_current_timestamp(), organizer, name, location, 'images/championships/default.png', 1, 1, comment])
+        let update_championship_query = "UPDATE championships SET image = 'images/championships/" + id_championship + ".png' WHERE id==" + id_championship
+        await utils.db_run(update_championship_query, [])
+
+        //championships_players
+        let insert_championships_players_query = "INSERT INTO championships_players (id_championship, id_player, place, score) " +
+            "VALUES (?, ?, ?, ?);"
+        for (let i = 0; i < id_player.length; i++) {
+            await utils.db_run(insert_championships_players_query, [id_championship, id_player[i]])
+        }
+
+        //championships_teams
+        let teams = create_teams(id_player)
+        let insert_championships_teams_query = "INSERT INTO championships_teams (id_championship, num_team, player1, player2) " +
+            "VALUES (?, ?, ?, ?);"
+        for (let i = 0; i < teams.length; i++) {
+            await utils.db_run(insert_championships_teams_query, [id_championship, i, teams[i][0], teams[i][1]])
+        }
+
+        result = await utils.championship_manager(id_championship)
     }
 
-    //championship
-    let insert_championship_query = "INSERT INTO championships (id, type, date, organizer, name, location, image, in_progress, season, comment) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-    var [id_championship, _] = await utils.db_run(insert_championship_query, [null, type, utils.get_current_timestamp(), organizer, name, location, 'images/championships/default.png', 1, 1, comment])
-    let update_championship_query = "UPDATE championships SET image = 'images/championships/" + id_championship + ".png' WHERE id==" + id_championship
-    await utils.db_run(update_championship_query, [])
-
-    //championships_players
-    let insert_championships_players_query = "INSERT INTO championships_players (id_championship, id_player, place, score) " +
-        "VALUES (?, ?, ?, ?);"
-    for (let i = 0; i < id_player.length; i++) {
-        await utils.db_run(insert_championships_players_query, [id_championship, id_player[i]])
-    }
-
-    return {
-        "ok": true
-    }
+    return result
 }
 
 async function get_championship_info(id_championship) {
@@ -61,33 +62,34 @@ async function get_championship_info(id_championship) {
 }
 
 async function get_championship_matches(id_championship) {
-    let query = "SELECT id_match, team1_player1, team1_player2, team2_player1, team2_player2, matches.to_be_played, team1_score, team2_score, id_noticeboard FROM championships_matches INNER JOIN matches ON championships_matches.id_match=matches.id WHERE id_championship==" + id_championship
-    let championship_matches = await utils.db_all(query)
-    let teams = new Set()
-    for (let i = 0; i < championship_matches.length; i++) {
-        teams.add([championship_matches[i]["team1_player1"], championship_matches[i]["team1_player2"]])
-        teams.add([championship_matches[i]["team2_player1"], championship_matches[i]["team2_player2"]])
-    }
-    teams = Array.from(teams)
-    var dict_teams_tostring = {}
-    teams.forEach((el, index) => dict_teams_tostring[index] = el.toString());
-    var dict_teams = {}
-    teams.forEach((el, index) => dict_teams[index] = el);
+    // load matches from DB for a specific championship
+    let query_matches = "SELECT id_match, team1, team2, matches.to_be_played, team1_score, team2_score, id_noticeboard FROM championships_matches INNER JOIN matches ON championships_matches.id_match=matches.id WHERE id_championship==" + id_championship
+    let championship_matches = await utils.db_all(query_matches)
+
     let matches = []
     for (let i = 0; i < championship_matches.length; i++) {
-        var team1 = utils.get_key_by_value(dict_teams_tostring, [championship_matches[i]["team1_player1"], championship_matches[i]["team1_player2"]].toString())
-        var team2 = utils.get_key_by_value(dict_teams_tostring, [championship_matches[i]["team2_player1"], championship_matches[i]["team2_player2"]].toString())
         matches.push({
             "id_match": championship_matches[i]["id_match"],
-            "team1": team1,
-            "team2": team2,
+            "team1": championship_matches[i]["team1"],
+            "team2": championship_matches[i]["team2"],
             "score": [championship_matches[i]["team1_score"], championship_matches[i]["team2_score"]],
             "id_noticeboard": championship_matches[i]["id_noticeboard"]
         })
     }
+
+    // load teams from DB for a specific championship
+    let query_teams = "SELECT num_team, player1, player2 FROM championships_teams WHERE id_championship==" + id_championship
+    let championship_teams_DB = await utils.db_all(query_teams)
+    let championship_teams = {}
+    let num_teams = championship_teams_DB.length
+
+    for (let i = 0; i < num_teams; i++) {
+        championship_teams[i.toString()] = [championship_teams_DB[i].player1, championship_teams_DB[i].player2]
+    }
+
     return {
-        "num_teams": teams.length,
-        "teams": dict_teams,
+        "num_teams": num_teams,
+        "teams": championship_teams,
         "matches": matches
     }
 }
@@ -126,7 +128,7 @@ async function get_locations(id_locations) {
 
 async function get_championships_in_progress(id_player) {
     let query = "SELECT * FROM championships WHERE in_progress==1"
-    if(id_player != undefined) {
+    if (id_player != undefined) {
         query = "SELECT championships.* FROM championships INNER JOIN championships_players ON id = id_championship WHERE in_progress==1 AND id_player==" + id_player
     }
     let championships = await utils.db_all(query)
@@ -135,9 +137,9 @@ async function get_championships_in_progress(id_player) {
 
 async function get_chart(id_players) {
     let query = "SELECT id_player, username, image, AVG(score) AS score FROM championships_players INNER JOIN players ON id_player = id"
-    if(id_players.length != 0) {
+    if (id_players.length != 0) {
         query += " WHERE "
-        for(let i=0;i<id_players.length-1;i++) {
+        for (let i = 0; i < id_players.length - 1; i++) {
             query += "id_player==" + id_players[i] + " or "
         }
         query += "id_player==" + id_players[id_players.length - 1]
@@ -151,7 +153,7 @@ async function update_match_result(id_match, team1_score, team2_score) {
     let update_match_query = "UPDATE matches SET datetime = datetime('now'), to_be_played = 0, team1_score = " + team1_score + ", team2_score = " + team2_score + " WHERE id==" + id_match + ";"
     await utils.db_run(update_match_query, [])
     let team1_points = team1_score > team2_score ? 1 : 0
-    let update_championship_match = "UPDATE championships_matches SET to_be_played = 0, team1_points = " + team1_points + ", team2_points = " + (1-team1_points) + " WHERE id_match==" + id_match + ";"
+    let update_championship_match = "UPDATE championships_matches SET to_be_played = 0, team1_points = " + team1_points + ", team2_points = " + (1 - team1_points) + " WHERE id_match==" + id_match + ";"
     var [_, change] = await utils.db_run(update_championship_match, [])
     return change
 }
@@ -159,9 +161,9 @@ async function update_match_result(id_match, team1_score, team2_score) {
 async function login(id_player, password) {
     let query = "SELECT * FROM players WHERE id==" + id_player + ";"
     let player = await utils.db_all(query)
-    if(player.length != 0) {
+    if (player.length != 0) {
         player = player[0]
-        if(player["password"] == password) {
+        if (player["password"] == password) {
             player["ok"] = true
         } else {
             player = {

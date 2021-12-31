@@ -39,25 +39,11 @@ CREATE TABLE IF NOT EXISTS locations (
 CREATE TABLE IF NOT EXISTS matches (
 	id integer PRIMARY KEY AUTOINCREMENT,
 	datetime datetime,
-	team1_player1 integer NOT NULL,
-	team1_player2 integer NOT NULL,
-	team2_player1 integer NOT NULL,
-	team2_player2 integer NOT NULL,
+	team1 integer NOT NULL,
+	team2 integer NOT NULL,
 	to_be_played integer NOT NULL,
 	team1_score integer,
 	team2_score integer,
-	CONSTRAINT fk_players_team1_player1
-    	FOREIGN KEY (team1_player1)
-    	REFERENCES players(id),
-	CONSTRAINT fk_players_team1_player2
-    	FOREIGN KEY (team1_player2)
-    	REFERENCES players(id),
-	CONSTRAINT fk_players_team2_player1
-    	FOREIGN KEY (team2_player1)
-    	REFERENCES players(id),
-	CONSTRAINT fk_players_team2_player2
-    	FOREIGN KEY (team2_player2)
-    	REFERENCES players(id),
 	CHECK((to_be_played == 0 AND
 			team1_score IS NOT NULL AND
 			team2_score IS NOT NULL) OR to_be_played == 1)
@@ -96,19 +82,36 @@ CREATE TABLE IF NOT EXISTS championships_players (
     	REFERENCES players(id)
 );
 
+CREATE TABLE IF NOT EXISTS championships_teams (
+	id_championship integer NOT NULL,
+	num_team integer NOT NULL,
+	player1 integer,
+	player2 integer,
+	CONSTRAINT primary_keys PRIMARY KEY (id_championship, num_team),
+	CONSTRAINT fk_championships
+    	FOREIGN KEY (id_championship)
+    	REFERENCES championships(id),
+	CONSTRAINT fk_player1
+    	FOREIGN KEY (player1)
+    	REFERENCES players(id),
+	CONSTRAINT fk_player2
+    	FOREIGN KEY (player2)
+    	REFERENCES players(id)
+);
+
 INSERT INTO players
 (id, username, password, image, sex, biography, mail, address, city)
 VALUES
-(NULL, 'Checco', 'versicalabresi', '../assets/laurel.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Ale', 'versicalabresi', "require('../assets/laurel.png')", 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Fede', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Wilson', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Gambo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Il Chimico', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Macca', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Gulli', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Gollo', 'versicalabresi', '/CalcinoSlam/images/player.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
-(NULL, 'Cami', 'versicalabresi', '/CalcinoSlam/images/player.png', 'F', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL);
+(NULL, 'Checco', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Ale', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Fede', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Wilson', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Gambo', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Il Chimico', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Macca', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Gulli', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Gollo', 'versicalabresi', 'http://localhost:3003/profile.png', 'M', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL),
+(NULL, 'Cami', 'versicalabresi', 'http://localhost:3003/profile.png', 'F', "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur.", NULL, NULL, NULL);
 
 INSERT INTO locations
 (id, name, image, comment)
@@ -126,12 +129,12 @@ VALUES
 (5, 'ELIMINAZIONE', date('now'), 3, 'BIG SLAM 6', 1, '/CalcinoSlam/images/championship.png', 1, 1, NULL);
 
 INSERT INTO matches
-(id, datetime, team1_player1, team1_player2, team2_player1, team2_player2, to_be_played, team1_score, team2_score)
+(id, datetime, team1, team2, to_be_played, team1_score, team2_score)
 VALUES
-(NULL, NULL, 1, 2, 3, 4, 1, NULL, NULL),
-(NULL, NULL, 1, 2, 5, 6, 1, NULL, NULL),
-(NULL, NULL, 3, 4, 7, 8, 1, NULL, NULL),
-(NULL, NULL, 5, 6, 7, 8, 1, NULL, NULL);
+(NULL, NULL, 0, 1, 1, NULL, NULL),
+(NULL, NULL, 2, 3, 1, NULL, NULL),
+(NULL, NULL, 4, 5, 1, NULL, NULL),
+(NULL, NULL, 1, 3, 1, NULL, NULL);
 
 INSERT INTO championships_matches
 (id_championship, id_match, to_be_played, team1_points, team2_points, id_noticeboard)
@@ -140,6 +143,14 @@ VALUES
 (1, 2, 1, NULL, NULL, 1),
 (1, 3, 1, NULL, NULL, 2),
 (1, 4, 1, NULL, NULL, 3);
+
+INSERT INTO championships_teams
+(id_championship, num_team, player1, player2)
+VALUES
+(1, 0, 1, 8),
+(1, 1, 2, 3),
+(1, 2, 4, 5),
+(1, 3, 6, 7);
 
 INSERT INTO championships_players
 (id_championship, id_player, place, score)
