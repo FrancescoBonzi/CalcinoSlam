@@ -141,14 +141,12 @@ async function championship_manager(id_championship) {
                             break
                     }
                 }
-                if (new_matches.length == 0) {
+                if (all_played && new_matches.length == 0) {
                     result.championship_end = true
-                } else {
+                } else if (new_matches.length > 0){
                     result.new_matches = true
                 }
-
             }
-
         }
     }
 
@@ -206,7 +204,7 @@ function manager_case_5teams(details) {
         case 4:
             let match2bis = match_chart(details.matches[2])
             let match3 = match_chart(details.matches[3])
-            if (match2.winner == match3.winner) {
+            if (match2bis.winner == match3.winner) {
                 new_matches.push([match3.loser, match2bis.loser])
             }
             break
@@ -348,7 +346,7 @@ async function chart_manager(id_championship) {
         result.push({
             "id_players": [current_team[0], current_team[1]],
             "id_team": final_chart[i].id_team,
-            "final_position": i, //same as final_chart[i].final_position
+            "final_position": final_chart[i].final_position,
             "final_score": final_chart[i].points
         })
     }
@@ -392,7 +390,7 @@ function naive_sort_del_cazzo_perche_quello_dimmerda_della_libreria_non_va(won_m
 
 function final_chart_girone(won_matches, details) {
     naive_sort_del_cazzo_perche_quello_dimmerda_della_libreria_non_va(won_matches)
-    console.log(won_matches)
+    let legend_points = legend_girone[details.num_teams]
     let final_chart = []
     let row = 0
     while (row < details.num_teams) {
@@ -419,25 +417,22 @@ function final_chart_girone(won_matches, details) {
             }
         }
         //now that we have all the teams in a draw we can assign the points
-        let legend_points = legend_girone[details.num_teams.toString()]
+        
         if (draw == 0){ // no draw, take the points
-            final_chart[row].points = legend_girone[details.num_teams][row]
-            console.log(final_chart[row])
+            final_chart[row].points = legend_points[row]
         }else if (draw == 1){ //the former team is the one that won the direct match
-            let team1 = won_matches[row].id_team
-            let team2 = won_matches[row + 1].id_team
-            console.log(team1, team2)
-            let direct_match = details.matches.find(o => (o.team1 == team1 && o.team2 == team2) || (o.team1 == team2 && o.team2 == team1))
-            let direct_match_chart = match_chart(direct_match)
-            let winner_finalchart_index = (team1 == direct_match_chart.winner) ? row : row + 1
-            let loser_finalchart_index = (team1 == direct_match_chart.winner) ? row + 1 : row
-            console.log(winner_finalchart_index, loser_finalchart_index)
-            final_chart[winner_finalchart_index].final_position = row
+            var team1 = won_matches[row].id_team
+            var team2 = won_matches[row + 1].id_team
+            var direct_match = details.matches.find(o => (o.team1 == team1 && o.team2 == team2) || (o.team1 == team2 && o.team2 == team1))
+            var direct_match_chart = match_chart(direct_match)
+            var winner_finalchart_index = (team1 == direct_match_chart.winner) ? row : row + 1
+            var loser_finalchart_index = (team1 == direct_match_chart.winner) ? row + 1 : row
+            //final_chart[winner_finalchart_index].final_position = row
             final_chart[winner_finalchart_index].points = legend_points[row]
             final_chart[loser_finalchart_index].final_position = row + 1
             final_chart[loser_finalchart_index].points = legend_points[row + 1]
         }else if (draw >= 2){//all the teams in the the draw get same position and points
-            let draw_points = Math.floor(sum_interval(legend_points, row, row+draw+1, 1) / (draw + 1))
+            var draw_points = Math.floor(sum_interval(legend_points, row, row+draw+1, 1) / (draw + 1))
             for (let i=0; i<draw+1; i++){
                 final_chart[row + i].points = draw_points
             }
@@ -479,6 +474,7 @@ function final_chart_elim_4(details) {
         "final_position": 3,
         "points": legend_elimin[details.num_teams.toString()][3]
     })
+    return final_chart
 }
 
 function final_chart_elim_5(details) {
@@ -532,7 +528,7 @@ function final_chart_elim_5(details) {
             "final_position": 1,
             "points": legend_elimin[details.num_teams.toString()][1]
         })
-        let average_points = sum_interval(legend_elimin[details.num_teams.toString()], 2, 4, 1) / 3
+        let average_points = Math.round(sum_interval(legend_elimin[details.num_teams.toString()], 2, 5, 1) / 3)
         final_chart.push({
             "id_team": matches_details[0].loser,
             "final_position": 2,
@@ -601,6 +597,7 @@ function final_chart_elim_6(details) {
         "final_position": 3,
         "points": legend_elimin[details.num_teams.toString()][3]
     })
+    return final_chart
 }
 
 function final_chart_elim_7(details) {

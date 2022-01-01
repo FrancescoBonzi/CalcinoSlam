@@ -137,7 +137,7 @@ async function get_championships_in_progress(id_player) {
 }
 
 async function get_chart(id_players) {
-    let query = "SELECT id_player, username, image, CAST((AVG(score)*(1-(1/COUNT(*)))) AS INT) AS score FROM championships_players INNER JOIN players ON id_player = id"
+    let query = "SELECT id_player, username, image,  CAST(AVG(score)*(1-1.0/COUNT(*)) AS INT) AS score FROM championships_players INNER JOIN players ON id_player = id GROUP BY id;"
     if (id_players.length != 0) {
         query += " WHERE "
         for (let i = 0; i < id_players.length - 1; i++) {

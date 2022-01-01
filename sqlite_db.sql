@@ -122,8 +122,8 @@ VALUES
 INSERT INTO championships
 (id, type, date, organizer, name, location, image, in_progress, season, comment)
 VALUES
-(1, 'GIRONI', date('now'), 1, 'BIG SLAM 1', 1, '/CalcinoSlam/images/championship.png', 1, 1, NULL),
-(2, 'GIRONI', date('now'), 2, 'BIG SLAM 2', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
+(1, 'GIRONE', date('now'), 1, 'BIG SLAM 1', 1, '/CalcinoSlam/images/championship.png', 1, 1, NULL),
+(2, 'GIRONE', date('now'), 2, 'BIG SLAM 2', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
 (3, 'ELIMINAZIONE', date('now'), 1, 'BIG SLAM 3', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
 (4, 'ELIMINAZIONE', date('now'), 3, 'BIG SLAM 4', 1, '/CalcinoSlam/images/championship.png', 0, 1, NULL),
 (5, 'ELIMINAZIONE', date('now'), 3, 'BIG SLAM 6', 1, '/CalcinoSlam/images/championship.png', 1, 1, NULL);
