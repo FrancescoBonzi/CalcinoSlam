@@ -50,6 +50,7 @@ async function create_championship(location, type, id_player, organizer, name, c
         }
 
         result = await utils.championship_manager(id_championship)
+        result.id_championship = id_championship
     }
 
     return result
@@ -136,7 +137,7 @@ async function get_championships_in_progress(id_player) {
 }
 
 async function get_chart(id_players) {
-    let query = "SELECT id_player, username, image, AVG(score) AS score FROM championships_players INNER JOIN players ON id_player = id"
+    let query = "SELECT id_player, username, image, CAST((AVG(score)*(1-(1/COUNT(*)))) AS INT) AS score FROM championships_players INNER JOIN players ON id_player = id"
     if (id_players.length != 0) {
         query += " WHERE "
         for (let i = 0; i < id_players.length - 1; i++) {
@@ -152,7 +153,7 @@ async function get_chart(id_players) {
 async function update_match_result(id_match, team1_score, team2_score) {
     let update_match_query = "UPDATE matches SET datetime = datetime('now'), to_be_played = 0, team1_score = " + team1_score + ", team2_score = " + team2_score + " WHERE id==" + id_match + ";"
     await utils.db_run(update_match_query, [])
-    let team1_points = team1_score > team2_score ? 1 : 0
+    let team1_points = (team1_score > team2_score) ? 1 : 0
     let update_championship_match = "UPDATE championships_matches SET to_be_played = 0, team1_points = " + team1_points + ", team2_points = " + (1 - team1_points) + " WHERE id_match==" + id_match + ";"
     var [_, change] = await utils.db_run(update_championship_match, [])
     return change

@@ -94,8 +94,8 @@ async function championship_manager(id_championship) {
                 }
                 result.new_matches = true
             }
-            let all_played = true
-            for (let i = 0; i <= details.matches.length; i++) {
+            let all_played = (details.matches.length == 0) ? false : true
+            for (let i=0; i<details.matches.length; i++) {
                 if (details.matches[i].score[0] == null) {
                     all_played = false
                     break
@@ -154,13 +154,13 @@ async function championship_manager(id_championship) {
 
     //matches
     let insert_matches_query = "INSERT INTO matches (id, datetime, team1, team2, to_be_played, team1_score, team2_score) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        "VALUES (?, ?, ?, ?, ?, ?, ?);"
     let id_matches = []
     for (let i = 0; i < new_matches.length; i++) {
         var team1 = new_matches[i][0]
         var team2 = new_matches[i][1]
         var [id_match, _] = await db_run(insert_matches_query, [null, null, team1, team2, 1, null, null])
-        id_matches += [id_match]
+        id_matches.push(id_match)
     }
 
     //championships_matches
@@ -317,24 +317,12 @@ function manager_case_8teams(details) {
 ********************************************************************/
 
 async function chart_manager(id_championship) {
-    let result = {
-        "chart": [{
-            "id_players": [1, 2],
-            "id_team": 1,
-            "final_position": 1,
-            "final_score": 45
-        },
-        {
-            "id_players": [1, 2],
-            "id_team": 1,
-            "final_position": 1,
-            "final_score": 45
-        }]
-    }
-    let details = model.get_championship_details(id_championship)
+    let result = []
+    let details = await model.get_championship_details(id_championship)
     let final_chart = []
+    let won_matches
     if (details.type == "GIRONE") {
-        won_matches = count_won_matches(id_championship, details)
+        won_matches = await count_won_matches(id_championship, details)
         final_chart = final_chart_girone(won_matches, details)
     } else if (details.type == "ELIMINAZIONE") {
         switch (details.num_teams) {
@@ -356,7 +344,7 @@ async function chart_manager(id_championship) {
         }
     }
     for (let i=0; i<details.num_teams; i++){
-        let current_team = details.teams["" + (final_chart[i].id_team)]
+        let current_team = details.teams[final_chart[i].id_team.toString()]
         result.push({
             "id_players": [current_team[0], current_team[1]],
             "id_team": final_chart[i].id_team,
@@ -364,31 +352,47 @@ async function chart_manager(id_championship) {
             "final_score": final_chart[i].points
         })
     }
-    let update_championship_players = "UPDATE championships_players SET place = " + result.final_position + ", score = " + result.final_score + " WHERE id_championship==" + id_championship +  " (id_player==" + result.id_players[0] + " OR id_player==" + result.id_players[1] + ");"
-    let update_championship_end = "UPDATE championships SET in_progress = 0 WHERE id==" + id_championship + ";"
-    await db_run(update_championship_players, [])
-    await db_run(update_championship_end, [])
+    for (let i=0; i<details.num_teams; i++){
+        var team_result = result[i]
+        var update_championship_players = "UPDATE championships_players SET place = " + team_result.final_position + ", score = " + team_result.final_score + " WHERE id_championship==" + id_championship + " AND (id_player==" + team_result.id_players[0] + " OR id_player==" + team_result.id_players[1] + ");"
+        var update_championship_end = "UPDATE championships SET in_progress = 0 WHERE id==" + id_championship + ";"
+        await db_run(update_championship_players, [])
+        await db_run(update_championship_end, [])
+    }
     return result
 }
 
 async function count_won_matches(id_championship, details) {
-    let won_matches = [] //in place i there is the number of won matches of team i
+    var won_matches = [] //in place i there is the number of won matches of team i
     for (let i = 0; i < details.num_teams; i++) {
-        var query = "SELECT SUM(1) AS final_score FROM championships_matches INNER JOIN matches ON championships_matches.id_match = matches.id WHERE (id_championship==" + id_championship + " AND " + 
-            "(team1==" + i + " AND team1_points==1) OR (team2==" + i + " AND team2_points==1))"
+        var query = "SELECT COUNT(*) AS final_score FROM championships_matches INNER JOIN matches ON championships_matches.id_match = matches.id WHERE (id_championship==" + id_championship + " AND " + 
+            "((team1==" + i + " AND team1_points==1) OR (team2==" + i + " AND team2_points==1)))"
         var won_matches_team = await db_all(query)
         won_matches.push({
             "id_team": i,
-            "final_score": won_matches_team[0].final_score
+            "final_score": parseInt(won_matches_team[0].final_score)
         })
     }
     return won_matches
 }
 
+function naive_sort_del_cazzo_perche_quello_dimmerda_della_libreria_non_va(won_matches){
+    for(let i=0;i<won_matches.length;i++) {
+        var max_index = 0
+        for( let j=0; j<won_matches.length-i;j++){
+            if(won_matches[j].final_score < won_matches[max_index].final_score) {
+                max_index = j
+            }
+            var tmp = won_matches[won_matches.length-i-1]
+            won_matches[won_matches.length-i-1] = won_matches[max_index]
+            won_matches[max_index] = tmp
+        } 
+    }
+}
+
 function final_chart_girone(won_matches, details) {
-    won_matches.sort(function (a, b) {
-        return a.final_score < b.final_score
-    })
+    naive_sort_del_cazzo_perche_quello_dimmerda_della_libreria_non_va(won_matches)
+    console.log(won_matches)
     let final_chart = []
     let row = 0
     while (row < details.num_teams) {
@@ -397,7 +401,7 @@ function final_chart_girone(won_matches, details) {
             "final_position": row,
             "points": 0
         })
-        var score_team = won_matches.find(o => o.id_team == row).final_score
+        var score_team = won_matches.find(o => o.id_team == won_matches[row].id_team).final_score
         var row_comp = row + 1
         var draw = 0 //how many teams are in a draw with the choosen one
         while (row_comp < details.num_teams) {
@@ -415,22 +419,25 @@ function final_chart_girone(won_matches, details) {
             }
         }
         //now that we have all the teams in a draw we can assign the points
+        let legend_points = legend_girone[details.num_teams.toString()]
         if (draw == 0){ // no draw, take the points
-            final_chart[row].points = legend_girone["" + (details.num_teams - 3)][row]
+            final_chart[row].points = legend_girone[details.num_teams][row]
+            console.log(final_chart[row])
         }else if (draw == 1){ //the former team is the one that won the direct match
             let team1 = won_matches[row].id_team
             let team2 = won_matches[row + 1].id_team
-            let direct_match = matches.find(o => (o.team1 == team1 && o.team2 == team2) || (o.team1 == team2 && o.team2 == team1))
+            console.log(team1, team2)
+            let direct_match = details.matches.find(o => (o.team1 == team1 && o.team2 == team2) || (o.team1 == team2 && o.team2 == team1))
             let direct_match_chart = match_chart(direct_match)
             let winner_finalchart_index = (team1 == direct_match_chart.winner) ? row : row + 1
             let loser_finalchart_index = (team1 == direct_match_chart.winner) ? row + 1 : row
-            let legend_points = legend_girone[details.num_teams - 3]
+            console.log(winner_finalchart_index, loser_finalchart_index)
             final_chart[winner_finalchart_index].final_position = row
             final_chart[winner_finalchart_index].points = legend_points[row]
             final_chart[loser_finalchart_index].final_position = row + 1
             final_chart[loser_finalchart_index].points = legend_points[row + 1]
         }else if (draw >= 2){//all the teams in the the draw get same position and points
-            let draw_points = Math.floor(sum_interval(legend_points, row, row+draw, 1) / (draw + 1))
+            let draw_points = Math.floor(sum_interval(legend_points, row, row+draw+1, 1) / (draw + 1))
             for (let i=0; i<draw+1; i++){
                 final_chart[row + i].points = draw_points
             }
@@ -455,22 +462,22 @@ function final_chart_elim_4(details) {
     final_chart.push({
         "id_team": match2.winner,
         "final_position": 0,
-        "points": legend_elimin["" + (details.num_teams)][0]
+        "points": legend_elimin[details.num_teams.toString()][0]
     })
     final_chart.push({
         "id_team": match2.loser,
         "final_position": 1,
-        "points": legend_elimin["" + (details.num_teams)][1]
+        "points": legend_elimin[details.num_teams.toString()][1]
     })
     final_chart.push({
         "id_team": match3.winner,
         "final_position": 2,
-        "points": legend_elimin["" + (details.num_teams)][2]
+        "points": legend_elimin[details.num_teams.toString()][2]
     })
     final_chart.push({
         "id_team": match3.loser,
         "final_position": 3,
-        "points": legend_elimin["" + (details.num_teams)][3]
+        "points": legend_elimin[details.num_teams.toString()][3]
     })
 }
 
@@ -483,49 +490,49 @@ function final_chart_elim_5(details) {
     final_chart.push({
         "id_team": matches_details[3].winner,
         "final_position": 0,
-        "points": legend_elimin["" + (details.num_teams)][0]
+        "points": legend_elimin[details.num_teams.toString()][0]
     })
     if (matches_details[2].winner == 4) {
         if (matches_details[3].winner == 4) {
             final_chart.push({
                 "id_team": matches_details[4].winner,
                 "final_position": 1,
-                "points": legend_elimin["" + (details.num_teams)][1]
+                "points": legend_elimin[details.num_teams.toString()][1]
             })
             final_chart.push({
                 "id_team": matches_details[4].loser,
                 "final_position": 2,
-                "points": legend_elimin["" + (details.num_teams)][2]
+                "points": legend_elimin[details.num_teams.toString()][2]
             })
         } else {
             final_chart.push({
                 "id_team": 4,
                 "final_position": 1,
-                "points": legend_elimin["" + (details.num_teams)][1]
+                "points": legend_elimin[details.num_teams.toString()][1]
             })
             final_chart.push({
                 "id_team": matches_details[1].winner,
                 "final_position": 2,
-                "points": legend_elimin["" + (details.num_teams)][2]
+                "points": legend_elimin[details.num_teams.toString()][2]
             })
         }
         final_chart.push({
             "id_team": matches_details[0].loser,
             "final_position": 3,
-            "points": legend_elimin["" + (details.num_teams)][3]
+            "points": legend_elimin[details.num_teams.toString()][3]
         })
         final_chart.push({
             "id_team": matches_details[1].loser,
             "final_position": 3,
-            "points": legend_elimin["" + (details.num_teams)][3]
+            "points": legend_elimin[details.num_teams.toString()][3]
         })
     } else {
         final_chart.push({
             "id_team": matches_details[3].loser,
             "final_position": 1,
-            "points": legend_elimin["" + (details.num_teams)][1]
+            "points": legend_elimin[details.num_teams.toString()][1]
         })
-        let average_points = sum_interval(legend_elimin["" + (details.num_teams)], 2, 4, 1) / 3
+        let average_points = sum_interval(legend_elimin[details.num_teams.toString()], 2, 4, 1) / 3
         final_chart.push({
             "id_team": matches_details[0].loser,
             "final_position": 2,
@@ -554,45 +561,45 @@ function final_chart_elim_6(details) {
     final_chart.push({
         "id_team": matches_details[4].winner,
         "final_position": 0,
-        "points": legend_elimin["" + (details.num_teams)][0]
+        "points": legend_elimin[details.num_teams.toString()][0]
     })
     if (matches_details[4].winner != matches_details[2].winner) {
         final_chart.push({
             "id_team": matches_details[5].winner,
             "final_position": 1,
-            "points": legend_elimin["" + (details.num_teams)][1]
+            "points": legend_elimin[details.num_teams.toString()][1]
         })
         final_chart.push({
             "id_team": matches_details[5].loser,
             "final_position": 2,
-            "points": legend_elimin["" + (details.num_teams)][2]
+            "points": legend_elimin[details.num_teams.toString()][2]
         })
     } else {
         final_chart.push({
             "id_team": matches_details[3].winner,
             "final_position": 1,
-            "points": legend_elimin["" + (details.num_teams)][1]
+            "points": legend_elimin[details.num_teams.toString()][1]
         })
         final_chart.push({
             "id_team": matches_details[3].loser,
             "final_position": 2,
-            "points": legend_elimin["" + (details.num_teams)][2]
+            "points": legend_elimin[details.num_teams.toString()][2]
         })
     }
     final_chart.push({
         "id_team": matches_details[0].loser,
         "final_position": 3,
-        "points": legend_elimin["" + (details.num_teams)][3]
+        "points": legend_elimin[details.num_teams.toString()][3]
     })
     final_chart.push({
         "id_team": matches_details[1].loser,
         "final_position": 3,
-        "points": legend_elimin["" + (details.num_teams)][3]
+        "points": legend_elimin[details.num_teams.toString()][3]
     })
     final_chart.push({
         "id_team": matches_details[2].loser,
         "final_position": 3,
-        "points": legend_elimin["" + (details.num_teams)][3]
+        "points": legend_elimin[details.num_teams.toString()][3]
     })
 }
 
@@ -605,69 +612,69 @@ function final_chart_elim_7(details) {
     final_chart.push({
         "id_team": matches_details[5].winner,
         "final_position": 0,
-        "points": legend_elimin["" + (details.num_teams)][0]
+        "points": legend_elimin[details.num_teams.toString()][0]
     })
     if (matches_details[4].winner == 6) {
         if (matches_details[5].winner != 6) {
             final_chart.push({
                 "id_team": matches_details[6].winner,
                 "final_position": 1,
-                "points": legend_elimin["" + (details.num_teams)][1]
+                "points": legend_elimin[details.num_teams.toString()][1]
             })
             final_chart.push({
                 "id_team": matches_details[6].loser,
                 "final_position": 2,
-                "points": legend_elimin["" + (details.num_teams)][2]
+                "points": legend_elimin[details.num_teams.toString()][2]
             })
             final_chart.push({
                 "id_team": matches_details[4].loser,
                 "final_position": 3,
-                "points": legend_elimin["" + (details.num_teams)][3]
+                "points": legend_elimin[details.num_teams.toString()][3]
             })
         } else {
             final_chart.push({
                 "id_team": matches_details[5].loser,
                 "final_position": 1,
-                "points": legend_elimin["" + (details.num_teams)][1]
+                "points": legend_elimin[details.num_teams.toString()][1]
             })
             final_chart.push({
                 "id_team": matches_details[6].winner,
                 "final_position": 2,
-                "points": legend_elimin["" + (details.num_teams)][2]
+                "points": legend_elimin[details.num_teams.toString()][2]
             })
             final_chart.push({
                 "id_team": matches_details[6].loser,
                 "final_position": 3,
-                "points": legend_elimin["" + (details.num_teams)][3]
+                "points": legend_elimin[details.num_teams.toString()][3]
             })
         }
         final_chart.push({
             "id_team": matches_details[0].loser,
             "final_position": 4,
-            "points": legend_elimin["" + (details.num_teams)][4]
+            "points": legend_elimin[details.num_teams.toString()][4]
         })
         final_chart.push({
             "id_team": matches_details[1].loser,
             "final_position": 4,
-            "points": legend_elimin["" + (details.num_teams)][4]
+            "points": legend_elimin[details.num_teams.toString()][4]
         })
         final_chart.push({
             "id_team": matches_details[2].loser,
             "final_position": 4,
-            "points": legend_elimin["" + (details.num_teams)][4]
+            "points": legend_elimin[details.num_teams.toString()][4]
         })
     }
     final_chart.push({
         "id_team": matches_details[5].loser,
         "final_position": 1,
-        "points": legend_elimin["" + (details.num_teams)][1]
+        "points": legend_elimin[details.num_teams.toString()][1]
     })
     final_chart.push({
         "id_team": matches_details[3].loser,
         "final_position": 2,
-        "points": legend_elimin["" + (details.num_teams)][2]
+        "points": legend_elimin[details.num_teams.toString()][2]
     })
-    let average_points = sum_interval(legend_elimin["" + (details.num_teams)], 3, 6, 1) / 4
+    let average_points = sum_interval(legend_elimin[details.num_teams.toString()], 3, 6, 1) / 4
     final_chart.push({
         "id_team": matches_details[0].loser,
         "final_position": 3,
@@ -700,42 +707,42 @@ function final_chart_elim_8(details) {
     final_chart.push({
         "id_team": matches_details[6].winner,
         "final_position": 0,
-        "points": legend_elimin["" + (details.num_teams)][0]
+        "points": legend_elimin[details.num_teams.toString()][0]
     })
     final_chart.push({
         "id_team": matches_details[6].loser,
         "final_position": 1,
-        "points": legend_elimin["" + (details.num_teams)][1]
+        "points": legend_elimin[details.num_teams.toString()][1]
     })
     final_chart.push({
         "id_team": matches_details[7].winner,
         "final_position": 2,
-        "points": legend_elimin["" + (details.num_teams)][2]
+        "points": legend_elimin[details.num_teams.toString()][2]
     })
     final_chart.push({
         "id_team": matches_details[7].loser,
         "final_position": 3,
-        "points": legend_elimin["" + (details.num_teams)][3]
+        "points": legend_elimin[details.num_teams.toString()][3]
     })
     final_chart.push({
         "id_team": matches_details[0].loser,
         "final_position": 4,
-        "points": legend_elimin["" + (details.num_teams)][4]
+        "points": legend_elimin[details.num_teams.toString()][4]
     })
     final_chart.push({
         "id_team": matches_details[1].loser,
         "final_position": 4,
-        "points": legend_elimin["" + (details.num_teams)][4]
+        "points": legend_elimin[details.num_teams.toString()][4]
     })
     final_chart.push({
         "id_team": matches_details[2].loser,
         "final_position": 4,
-        "points": legend_elimin["" + (details.num_teams)][4]
+        "points": legend_elimin[details.num_teams.toString()][4]
     })
     final_chart.push({
         "id_team": matches_details[3].loser,
         "final_position": 4,
-        "points": legend_elimin["" + (details.num_teams)][4]
+        "points": legend_elimin[details.num_teams.toString()][4]
     })
     return final_chart
 }

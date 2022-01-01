@@ -1,4 +1,4 @@
-const { championship_manager } = require('./utils.js');
+const utils = require('./utils.js');
 const model = require('./model.js');
 
 function error404(req, res, next) {
@@ -84,12 +84,19 @@ async function get_championship_details(req, res, next) {
 async function update_championship_status(req, res, next) {
     let id_match = req.query.id_match
     let id_championship = req.query.id_championship
-    let team1_score = req.query.team1_score
-    let team2_score = req.query.team2_score
-    let _ = await model.update_match_result(id_match, team1_score, team2_score)
-    let championship_status = utils.championship_manager(id_championship)
+    let team1_score = parseInt(req.query.team1_score)
+    let team2_score = parseInt(req.query.team2_score)
+    let update_success = await model.update_match_result(id_match, team1_score, team2_score)
+    let result
+    if (update_success){
+        result = await utils.championship_manager(id_championship)
+    }else{
+        result = {
+            "error": "error in the update of the match score"
+        }
+    }
     res.type("application/json")
-    res.send(JSON.stringify(championship_status))
+    res.send(JSON.stringify(result))
 }
 
 async function get_chart(req, res, next) {
