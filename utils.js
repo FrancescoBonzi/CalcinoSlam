@@ -204,7 +204,7 @@ function manager_case_5teams(details) {
         case 4:
             let match2bis = match_chart(details.matches[2])
             let match3 = match_chart(details.matches[3])
-            if (match2bis.winner == match3.winner) {
+            if (match2bis.winner == 4 && match3.winner == 4) {
                 new_matches.push([match3.loser, match2bis.loser])
             }
             break
