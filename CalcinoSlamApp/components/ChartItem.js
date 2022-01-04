@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Button,
-  Alert,
-  Text,
-  StyleSheet,
-  Image,
-  useWindowDimensions,
-} from 'react-native';
+import {View, Text, StyleSheet, Image, useWindowDimensions} from 'react-native';
 
 export default function ChartItem({item}) {
   const {width} = useWindowDimensions();

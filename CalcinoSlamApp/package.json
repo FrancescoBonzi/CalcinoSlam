@@ -16,6 +16,7 @@
     "@material-ui/core": "^4.12.3",
     "@mui/core": "^5.0.0-alpha.54",
     "@mui/material": "^5.2.6",
+    "@react-native-picker/picker": "^2.2.1",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "expo-status-bar": "^1.2.0",
