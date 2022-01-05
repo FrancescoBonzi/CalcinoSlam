@@ -1,59 +1,85 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  View,
-  StyleSheet,
-  FlatList,
-  Animated,
-} from 'react-native';
-import ChampionshipItem from './ChampionshipItem';
+import React, {useState, useEffect} from 'react';
+import {ActivityIndicator, View, StyleSheet} from 'react-native';
+import ChampionshipCreation from './ChampionshipCreation';
 import Noticeboard from './Noticeboard';
 
 export default function Championship({navigation}) {
-  const [isLoading, setLoading] = useState(true);
   const [existingChampionship, setExistingChampionship] = useState(false);
-  const [data, setData] = useState([]);
+  const [championshipsInProgress, setChampionshipsInProgress] = useState(null);
+  const [locations, setLocations] = useState(null);
+  const [players, setPlayers] = useState(null);
 
+  const getLocations = async () => {
+    try {
+      const response = await fetch('http://localhost:3003/get_locations', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_locations: [],
+        }),
+      });
+      const json = await response.json();
+      setLocations(json);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const getPlayers = async () => {
+    try {
+      const response = await fetch('http://localhost:3003/get_players', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_players: [],
+        }),
+      });
+      const json = await response.json();
+      setPlayers(json);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const getChampionshipsInProgress = async () => {
     try {
       const response = await fetch(
         'http://localhost:3003/get_championships_in_progress?id_player=1',
       );
-      console.log(response);
       const json = await response.json();
-      setData(json);
+      setChampionshipsInProgress(json);
       if (json.length !== 0) {
         setExistingChampionship(true);
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     getChampionshipsInProgress();
+    getPlayers();
+    getLocations();
   }, []);
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
+      {locations === null ||
+      players === null ||
+      championshipsInProgress === null ? (
         <ActivityIndicator />
       ) : existingChampionship ? (
-        <Noticeboard id_championship={data[0].id} />
+        <Noticeboard
+          id_championship={championshipsInProgress[0].id}
+          locations={locations}
+          players={players}
+        />
       ) : (
-        <>
-          <View style={{}}>
-            <FlatList
-              data={data}
-              renderItem={({item}) => <ChampionshipItem item={item} />}
-              pagingEnabled
-              //bounces={false}
-              keyExtractor={item => item.id}
-            />
-          </View>
-        </>
+        <ChampionshipCreation locations={locations} players={players} />
       )}
     </View>
   );
