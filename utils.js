@@ -236,15 +236,14 @@ function manager_case_6teams(details) {
         case 4:
             let match2 = match_chart(details.matches[2])
             let match3 = match_chart(details.matches[3])
-            new_matches.push([match2.winner, match3.winner])
+            new_matches.push([match3.winner, match2.winner])
             break
         case 5:
             let match2bis = match_chart(details.matches[2])
             let match4 = match_chart(details.matches[4])
             if (match2bis.winner != match4.winner) {
-                let parent_match = parent_match_standardtree(match4.winner)
-                let match = match_chart(details.matches[parent_match])
-                new_matches.push([match.winner, match2bis.winner])
+                let match3bis = match_chart(details.matches[3])
+                new_matches.push([match3bis.loser, match2bis.winner])
             }
             break
     }
@@ -270,15 +269,11 @@ function manager_case_7teams(details) {
             let match4bis = match_chart(details.matches[4])
             if (match4bis.winner == 6) {
                 let match5 = match_chart(details.matches[5])
+                let match3bis = match_chart(details.matches[3])
                 if (match5.winner == 6) {
-                    let match2bis = match_chart(details.matches[2])
-                    let parent_match = parent_match_standardtree(match5.loser)
-                    let match = match_chart(details.matches[parent_match])
-                    new_matches.push([match2bis.winner, match.winner])
+                    new_matches.push([match3bis.loser, match4bis.loser])
                 } else {
-                    let parent_match = parent_match_standardtree(match5.winner)
-                    let match = match_chart(details.matches[parent_match])
-                    new_matches.push([match.winner, 6])
+                    new_matches.push([match3bis.loser, 6])
                 }
             }
             break
@@ -618,16 +613,30 @@ function final_chart_elim_7(details) {
                 "final_position": 1,
                 "points": legend_elimin[details.num_teams.toString()][1]
             })
-            final_chart.push({
-                "id_team": matches_details[6].loser,
-                "final_position": 2,
-                "points": legend_elimin[details.num_teams.toString()][2]
-            })
-            final_chart.push({
-                "id_team": matches_details[4].loser,
-                "final_position": 3,
-                "points": legend_elimin[details.num_teams.toString()][3]
-            })
+            if (matches_details[6].winner == 6) {
+                let average_points = Math.round(sum_interval(legend_elimin[details.num_teams.toString()], 2, 4, 1) / 2)
+                final_chart.push({
+                    "id_team": matches_details[6].loser,
+                    "final_position": 2,
+                    "points": average_points
+                })
+                final_chart.push({
+                    "id_team": matches_details[4].loser,
+                    "final_position": 2,
+                    "points": average_points
+                })
+            } else {
+                final_chart.push({
+                    "id_team": matches_details[6].loser,
+                    "final_position": 2,
+                    "points": legend_elimin[details.num_teams.toString()][2]
+                })
+                final_chart.push({
+                    "id_team": matches_details[4].loser,
+                    "final_position": 3,
+                    "points": legend_elimin[details.num_teams.toString()][3]
+                })
+            }
         } else {
             final_chart.push({
                 "id_team": matches_details[5].loser,
@@ -671,7 +680,7 @@ function final_chart_elim_7(details) {
         "final_position": 2,
         "points": legend_elimin[details.num_teams.toString()][2]
     })
-    let average_points = sum_interval(legend_elimin[details.num_teams.toString()], 3, 6, 1) / 4
+    let average_points = Math.round(sum_interval(legend_elimin[details.num_teams.toString()], 3, 7, 1) / 4)
     final_chart.push({
         "id_team": matches_details[0].loser,
         "final_position": 3,
