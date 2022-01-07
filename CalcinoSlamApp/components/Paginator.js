@@ -4,7 +4,7 @@ import {View, StyleSheet, Animated, useWindowDimensions} from 'react-native';
 export default function Paginator({data, scrollX}) {
   const {width} = useWindowDimensions();
   return (
-    <View style={{flexDirection: 'row', height: 64, marginBottom: 50}}>
+    <View style={styles.container}>
       {data.map((_, i) => {
         const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
         const dotWidth = scrollX.interpolate({
@@ -29,6 +29,12 @@ export default function Paginator({data, scrollX}) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    height: 64,
+    marginBottom: 40,
+    marginTop: 20,
+  },
   dot: {
     height: 10,
     borderRadius: 5,

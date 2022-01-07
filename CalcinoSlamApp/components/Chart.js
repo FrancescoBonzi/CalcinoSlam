@@ -1,10 +1,10 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ActivityIndicator,
   View,
   StyleSheet,
-  FlatList,
-  Animated,
+  Image,
+  ScrollView,
 } from 'react-native';
 import ChartItem from './ChartItem';
 
@@ -25,8 +25,8 @@ export default function Onboarding({navigation}) {
         }),
       });
       const json = await response.json();
-      json.map((_, i) => {
-        json[i].score = json[i].score.toFixed(1);
+      json.sort((a, b) => {
+        return a.score < b.score;
       });
       setData(json);
     } catch (error) {
@@ -41,19 +41,21 @@ export default function Onboarding({navigation}) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={{width: '100%', backgroundColor: '#ffc7cc'}}>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
         <>
-          <View style={{}}>
-            <FlatList
-              data={data}
-              renderItem={({item}) => <ChartItem item={item} />}
-              pagingEnabled
-              //bounces={false}
-              keyExtractor={item => item.id}
-            />
+          <View style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Image
+                style={styles.image}
+                source={require('../assets/winner.png')}
+              />
+              {data.map((item, index) => (
+                <ChartItem item={item} index={index} />
+              ))}
+            </ScrollView>
           </View>
         </>
       )}
@@ -62,9 +64,13 @@ export default function Onboarding({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    height: '15%',
+    aspectRatio: 1,
+    alignSelf: 'center',
+  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '90%',
+    left: '5%',
   },
 });

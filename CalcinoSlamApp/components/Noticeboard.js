@@ -4,15 +4,45 @@ import {
   View,
   StyleSheet,
   Text,
-  FlatList,
+  ScrollView,
+  Button,
+  Image,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import MatchCard from './MatchCard';
 import ChampionshipChartItem from './ChampionshipChartItem';
 
-export default function Noticeboard({id_championship, locations, players}) {
-  const [details, setDetails] = useState(null);
+export default function Noticeboard({route, navigation}) {
+  const {id_championship, players, locations, details_} = route.params;
+  const [details, setDetails] = useState(details_);
   const [chart, setChart] = useState(null);
   const [finished, setFinished] = useState(false);
+  const deleteChampionship = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:3003/delete_championship?id_championship=' +
+          id_championship,
+      );
+      const json = await response.json();
+      if (json.championship_deleted) {
+        navigation.navigate('Home');
+      } else {
+        Alert.alert('Non è stato possibile cancellare il campionato...');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const alertDeleteChampionship = () => {
+    Alert.alert('Stai cancellando il campionato', 'Sei sicuro?', [
+      {
+        text: 'No',
+        style: 'cancel',
+      },
+      {text: 'Si', onPress: () => deleteChampionship()},
+    ]);
+  };
   const getDetails = async () => {
     try {
       const response = await fetch(
@@ -20,6 +50,7 @@ export default function Noticeboard({id_championship, locations, players}) {
           id_championship,
       );
       const json = await response.json();
+      console.log(json);
       setDetails(json);
     } catch (error) {
       console.error(error);
@@ -32,6 +63,7 @@ export default function Noticeboard({id_championship, locations, players}) {
           id_championship,
       );
       const json = await response.json();
+      console.log(json);
       setChart(json);
     } catch (error) {
       console.error(error);
@@ -41,9 +73,11 @@ export default function Noticeboard({id_championship, locations, players}) {
   };
 
   useEffect(() => {
-    getDetails();
+    if (details_ == null) {
+      getDetails();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [route]);
 
   return (
     <View style={styles.container}>
@@ -51,36 +85,54 @@ export default function Noticeboard({id_championship, locations, players}) {
         <ActivityIndicator />
       ) : (
         <>
-          <View style={styles.info}>
-            <Text>{details.name}</Text>
-            <Text>{details.type}</Text>
-            <Text>{locations.find(o => o.id === details.location).name}</Text>
-          </View>
-          {!finished ? (
-            <View style={styles.matches}>
-              <FlatList
-                data={details.matches}
-                renderItem={({item}) => (
-                  <MatchCard
-                    item={item}
-                    players={players}
-                    details={details}
-                    getNewMatches={getDetails}
-                    getChampionshipChart={getChampionshipChart}
-                  />
-                )}
-                pagingEnabled
-              />
+          <View style={styles.header}>
+            <View style={styles.info}>
+              <Text style={styles.name}>{details.name}</Text>
+              <Text style={styles.type}>{details.type}</Text>
+              <Text style={styles.location}>
+                {locations.find(o => o.id === details.location).name}
+              </Text>
             </View>
-          ) : (
-            <FlatList
-              data={chart}
-              renderItem={({item}) => (
-                <ChampionshipChartItem item={item} players={players} />
+            <TouchableOpacity
+              style={styles.bin_image_container}
+              onPress={() => alertDeleteChampionship()}>
+              <Image
+                style={styles.bin_image}
+                source={require('../assets/bin.png')}
+              />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <ScrollView>
+              {!finished ? (
+                <View style={styles.matches}>
+                  {details.matches.map((item, index) => (
+                    <MatchCard
+                      item={item}
+                      players={players}
+                      details={details}
+                      getNewMatches={getDetails}
+                      getChampionshipChart={getChampionshipChart}
+                    />
+                  ))}
+                </View>
+              ) : (
+                <>
+                  <View>
+                    {chart.map((item, index) => (
+                      <ChampionshipChartItem item={item} players={players} />
+                    ))}
+                  </View>
+                  <View style={styles.btnContainer}>
+                    <Button
+                      title="Torna alla home"
+                      onPress={() => navigation.navigate('Home')}
+                    />
+                  </View>
+                </>
               )}
-              pagingEnabled
-            />
-          )}
+            </ScrollView>
+          </View>
         </>
       )}
     </View>
@@ -88,18 +140,52 @@ export default function Noticeboard({id_championship, locations, players}) {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    width: '100%',
+    flexDirection: 'row',
+  },
   container: {
     height: '100%',
     width: '100%',
   },
   info: {
-    padding: 40,
-    justifyContent: 'center',
+    width: '100%',
     alignItems: 'center',
-    //backgroundColor: 'red',
+    padding: 30,
   },
-  matches: {
-    flex: 3,
-    marginBottom: 50,
+  name: {
+    fontSize: 30,
+    fontWeight: '700',
+    color: '#4f3c75',
+  },
+  type: {
+    fontSize: 16,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    //color: '#4f3c75',
+  },
+  location: {
+    fontSize: 16,
+    fontWeight: '700',
+    //textTransform: 'uppercase',
+    color: '#4f3c75',
+  },
+  btnContainer: {
+    backgroundColor: '#f2f0f1',
+    marginTop: '5%',
+    width: '90%',
+    alignSelf: 'center',
+    marginHorizontal: 4,
+    borderRadius: 5,
+    borderWidth: 0,
+  },
+  bin_image: {
+    height: 25,
+    width: 25,
+  },
+  bin_image_container: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 });

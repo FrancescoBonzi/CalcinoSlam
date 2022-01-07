@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, useWindowDimensions} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 
-export default function ChartItem({item}) {
-  const {width} = useWindowDimensions();
+export default function ChartItem({item, index}) {
   return (
-    <View style={[styles.container, {width}]}>
+    <View style={styles.container}>
+      <Text style={styles.position}>{index + 1}°</Text>
       <Image
         style={styles.image}
         source={{
@@ -19,38 +19,40 @@ export default function ChartItem({item}) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: '100%',
+    height: 65,
     flexDirection: 'row',
-    backgroundColor: '#a8d0e6',
-    borderRadius: 5,
-    marginTop: 7,
-    marginRight: 7,
-    marginLeft: 7,
+    backgroundColor: 'white', //'#ffb3ba', //'#d4d7ff',
+    borderRadius: 10,
+    marginTop: '3%',
   },
   image: {
     alignItems: 'center',
     width: 50,
     height: 50,
     marginTop: 7.5,
-    position: 'absolute',
-    left: '5%',
+    position: 'relative',
+    left: '20%',
+  },
+  position: {
+    fontWeight: '800',
+    fontSize: 28,
+    paddingLeft: '5%',
+    alignSelf: 'center',
+    color: '#a92a35',
   },
   username: {
-    fontWeight: '600',
-    fontSize: 28,
-    marginLeft: 80,
-    marginVertical: 15,
-    color: '#24305e',
-    left: '20%',
+    fontWeight: '700',
+    fontSize: 24,
+    left: '40%',
+    alignSelf: 'center',
   },
   score: {
     fontWeight: '800',
     fontSize: 28,
-    color: '#f76c6c',
-    textAlign: 'center',
-    paddingHorizontal: 30,
-    marginVertical: 15,
+    alignSelf: 'center',
+    color: '#a92a35',
     position: 'absolute',
-    left: '70%',
+    right: '5%',
   },
 });

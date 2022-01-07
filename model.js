@@ -22,10 +22,11 @@ async function create_championship(location, type, id_player, organizer, name, c
     if ((type != "GIRONE" && type != "ELIMINAZIONE") ||
         (id_player.length % 2 == 1)) {
         result = {
-            "ok": false,
+            "championship_approved": false,
             "error": "championship type not supported"
         }
-    } else {
+    } else if ((type == 'GIRONE' && id_player.length >= 6 && id_player.length <= 12) ||
+        (type == 'ELIMINAZIONE' && id_player.length >= 8 && id_player.length <= 16)) {
 
         //championship
         let insert_championship_query = "INSERT INTO championships (id, type, date, organizer, name, location, image, in_progress, season, comment) " +
@@ -51,6 +52,11 @@ async function create_championship(location, type, id_player, organizer, name, c
 
         result = await utils.championship_manager(id_championship)
         result.id_championship = id_championship
+    } else {
+        result = {
+            "championship_approved": false,
+            "error": "wrong number of players"
+        }
     }
 
     return result
@@ -179,6 +185,49 @@ async function login(id_player, password) {
     return player
 }
 
+async function delete_championship(id_championship) {
+    let query = "SELECT id_match FROM championships_matches WHERE id_championship==" + id_championship
+    let id_matches = await utils.db_all(query)
+    id_matches = id_matches.map((a) => a.id_match)
+    console.log(id_matches)
+
+    let delete_query = "DELETE FROM championships_matches WHERE id_championship==?;"
+    let _, change = await utils.db_run(delete_query, [id_championship])
+    console.log(change)
+
+    if(id_matches.length > 0) {
+        delete_query = "DELETE FROM matches WHERE"
+        for(let i=0;i<id_matches.length-1;i++) {
+            delete_query += " id==? OR"
+        }
+        delete_query += " id==?;"
+        _, change = await utils.db_run(delete_query, id_matches)
+        console.log("matches: ", change)
+    }
+
+    delete_query = "DELETE FROM championships_players WHERE id_championship==?;"
+    _, change = await utils.db_run(delete_query, [id_championship])
+    console.log(change)
+
+    delete_query = "DELETE FROM championships_teams WHERE id_championship==?;"
+    _, change = await utils.db_run(delete_query, [id_championship])
+    console.log(change)
+
+    delete_query = "DELETE FROM championships WHERE id==?;"
+    _, change = await utils.db_run(delete_query, [id_championship])
+    console.log(change)
+
+    return {
+        "championship_deleted": true
+    }
+}
+
+async function get_prizes(id_player) {
+    let query = "SELECT * FROM championships_players INNER JOIN championships ON id_championship = id WHERE id_player==" + id_player + ";"
+    let prizes = await utils.db_all(query)
+    return prizes
+}
+
 module.exports.get_players = get_players;
 module.exports.get_locations = get_locations;
 module.exports.get_championships_in_progress = get_championships_in_progress;
@@ -189,3 +238,5 @@ module.exports.get_championship_matches = get_championship_matches;
 module.exports.get_championship_details = get_championship_details;
 module.exports.update_match_result = update_match_result;
 module.exports.login = login;
+module.exports.delete_championship = delete_championship;
+module.exports.get_prizes = get_prizes;

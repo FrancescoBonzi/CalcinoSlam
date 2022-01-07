@@ -23,21 +23,37 @@ export default function MatchCard({
   const [scoreRight, setScoreRight] = useState(
     item.score[1] == null ? '-' : item.score[1].toString(),
   );
-  console.log(item);
-  console.log(details.teams);
-  console.log(details.teams[item.team1]);
-  console.log(players.find(o => o.id == details.teams[item.team1][0]));
   const t1p1 = players.find(o => o.id == details.teams[item.team1][0]);
   const t1p2 = players.find(o => o.id == details.teams[item.team1][1]);
   const t2p1 = players.find(o => o.id == details.teams[item.team2][0]);
   const t2p2 = players.find(o => o.id == details.teams[item.team2][1]);
   let pattern = /^([0-9]|10)$/;
-  let color = 'white';
+  let color = '#ffc7cc';
   if (pattern.test(scoreLeft) && pattern.test(scoreRight)) {
-    color = 'lightgreen';
+    color = '#9cffb1';
     //setEditableText(false);
   }
   const [backColor, setBackColor] = useState(color);
+  const clearWrongCharactersRight = () => {
+    if (!pattern.test(scoreRight)) {
+      setScoreRight('');
+    }
+  };
+  const putEndCharacterRight = () => {
+    if (!pattern.test(scoreRight)) {
+      setScoreRight('-');
+    }
+  };
+  const clearWrongCharactersLeft = () => {
+    if (!pattern.test(scoreLeft)) {
+      setScoreLeft('');
+    }
+  };
+  const putEndCharacterLeft = () => {
+    if (!pattern.test(scoreLeft)) {
+      setScoreLeft('-');
+    }
+  };
   const updateChampionshipStatus = async () => {
     try {
       const res = await fetch(
@@ -51,7 +67,6 @@ export default function MatchCard({
           scoreRight,
       );
       const json = await res.json();
-      console.log('yeppa ' + json.new_matches, json.championship_end);
       if (json.new_matches === true && json.championship_end === false) {
         getNewMatches();
       } else if (json.new_matches === false && json.championship_end === true) {
@@ -65,7 +80,7 @@ export default function MatchCard({
     if (pattern.test(scoreLeft) && pattern.test(scoreRight)) {
       setEditableText(false);
       await updateChampionshipStatus();
-      setBackColor('lightgreen');
+      setBackColor('#9cffb1');
     } else {
       Alert.alert('Hai scritto male il punteggio!\n*Versi calabresi*');
     }
@@ -104,6 +119,8 @@ export default function MatchCard({
               onChangeText={text => setScoreLeft(text)}
               defaultValue={scoreLeft}
               editable={editableText}
+              onPressIn={() => clearWrongCharactersLeft()}
+              onEndEditing={() => putEndCharacterLeft()}
             />
           </View>
         </View>
@@ -144,9 +161,12 @@ export default function MatchCard({
           </View>
           <View style={styles.score_right}>
             <TextInput
+              name={'score_right'}
               style={styles.score_text}
               keyboardType={'numeric'}
               onChangeText={text => setScoreRight(text)}
+              onPressIn={() => clearWrongCharactersRight()}
+              onEndEditing={() => putEndCharacterRight()}
               defaultValue={scoreRight}
               editable={editableText}
             />
@@ -159,14 +179,13 @@ export default function MatchCard({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 10,
+    marginBottom: '3%',
     flexDirection: 'row',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#f76c6c',
-    marginHorizontal: 4,
-    borderRadius: 5,
-    paddingBottom: 150,
+    width: '90%',
+    alignSelf: 'center',
+    borderRadius: 20,
+    paddingBottom: 135,
     position: 'relative',
   },
   card_left: {
@@ -206,12 +225,12 @@ const styles = StyleSheet.create({
   },
   score_left: {
     position: 'absolute',
-    right: '100%',
+    right: '90%',
     top: '40%',
   },
   score_right: {
     position: 'absolute',
-    left: '100%',
+    left: '90%',
     top: '40%',
   },
   score_text: {

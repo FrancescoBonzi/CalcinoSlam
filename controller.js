@@ -113,6 +113,20 @@ async function get_championship_chart(req, res, next){
     res.send(JSON.stringify(chart))
 }
 
+async function delete_championship(req, res, next){
+    let id_championship = req.query.id_championship
+    let result = await model.delete_championship(id_championship)
+    res.type("application/json")
+    res.send(JSON.stringify(result))
+}
+
+async function get_prizes(req, res, next){
+    let id_player = req.query.id_player
+    let prizes = await model.get_prizes(id_player)
+    res.type("application/json")
+    res.send(JSON.stringify(prizes))
+}
+
 exports.dispatcher = function (app) {
     app.post('/create_championship', create_championship)
     app.post('/get_players', get_players)
@@ -125,6 +139,8 @@ exports.dispatcher = function (app) {
     app.get('/get_championship_details', get_championship_details)
     app.get('/update_championship_status', update_championship_status)
     app.get('/get_championship_chart', get_championship_chart)
+    app.get('/delete_championship', delete_championship)
+    app.get('/get_prizes', get_prizes);
     app.use(error404) // 404 catch-all handler (middleware)
     app.use(error500) // 500 error handler (middleware)
 }

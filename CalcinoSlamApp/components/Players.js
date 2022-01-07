@@ -1,15 +1,10 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  View,
-  StyleSheet,
-  FlatList,
-  Animated,
-} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {View, StyleSheet, FlatList, Animated} from 'react-native';
 import PlayersItem from './PlayersItem';
 import Paginator from './Paginator';
 
-export default function Onboarding({navigation}) {
+export default function Onboarding({route, navigation}) {
+  const {players} = route.params;
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef(null);
@@ -18,63 +13,27 @@ export default function Onboarding({navigation}) {
     setCurrentIndex(viewableItems[0].index);
   }).current;
 
-  const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-
-  const getPlayers = async () => {
-    try {
-      const response = await fetch('http://localhost:3003/get_players', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id_players: [],
-        }),
-      });
-      const json = await response.json();
-      setData(json);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getPlayers();
-  }, []);
-
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-          <View style={{}}>
-            <FlatList
-              data={data}
-              renderItem={({item}) => <PlayersItem item={item} />}
-              horizontal
-              pagingEnabled
-              //bounces={false}
-              keyExtractor={item => item.id}
-              onScroll={Animated.event(
-                [{nativeEvent: {contentOffset: {x: scrollX}}}],
-                {
-                  useNativeDriver: false,
-                },
-              )}
-              scrollEventThrottle={32}
-              onViewableItemsChanged={viewableItemsChanged}
-              ref={slidesRef}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
-          <Paginator data={data} scrollX={scrollX} />
-        </>
-      )}
+      <View style={{}}>
+        <FlatList
+          data={players}
+          renderItem={({item}) => <PlayersItem item={item} />}
+          horizontal
+          pagingEnabled
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {x: scrollX}}}],
+            {
+              useNativeDriver: false,
+            },
+          )}
+          scrollEventThrottle={32}
+          onViewableItemsChanged={viewableItemsChanged}
+          ref={slidesRef}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+      <Paginator data={players} scrollX={scrollX} />
     </View>
   );
 }
