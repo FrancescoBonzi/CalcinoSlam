@@ -7,20 +7,17 @@ import {
   useWindowDimensions,
   ScrollView,
 } from 'react-native';
+import getPlayerImages from '../playerImages';
+import config from '../config';
 
 export default function PlayersItem({item}) {
   const {width} = useWindowDimensions();
   const [numChamp, setNumChamp] = useState('');
   const [prizes, setPrizes] = useState([]);
-  var options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
   const getPrizes = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3003/get_prizes?id_player=' + item.id,
+        config.host + ':' + config.port + '/get_prizes?id_player=' + item.id,
       );
       const json = await response.json();
       setNumChamp(json.length);
@@ -37,14 +34,9 @@ export default function PlayersItem({item}) {
   }, []);
   return (
     <View style={[styles.container, {width}]}>
-      <Image style={styles.logo} source={require('../assets/logo2.png')} />
+      <Image style={styles.logo} source={require('../assets/logo.png')} />
       <View style={styles.header}>
-        <Image
-          style={styles.image}
-          source={{
-            uri: item.image,
-          }}
-        />
+        <Image style={styles.image} source={getPlayerImages(item.id)} />
         <View style={styles.right_header}>
           <Text style={styles.username}>{item.username}</Text>
           <Text style={styles.championship_played}>
@@ -97,6 +89,8 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
+    borderRadius: 100 / 2,
+    overflow: 'hidden',
     marginTop: '5%',
   },
   right_header: {

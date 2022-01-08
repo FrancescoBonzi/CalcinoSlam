@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import ChartItem from './ChartItem';
+import config from '../config';
 
 export default function Onboarding({navigation}) {
   const [isLoading, setLoading] = useState(true);
@@ -14,16 +15,19 @@ export default function Onboarding({navigation}) {
 
   const getChart = async () => {
     try {
-      const response = await fetch('http://localhost:3003/get_chart', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        config.host + ':' + config.port + '/get_chart',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id_players: [],
+          }),
         },
-        body: JSON.stringify({
-          id_players: [],
-        }),
-      });
+      );
       const json = await response.json();
       json.sort((a, b) => {
         return a.score < b.score;

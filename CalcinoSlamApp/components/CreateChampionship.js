@@ -3,6 +3,7 @@ import {Text, Button, View, StyleSheet, Alert, ScrollView} from 'react-native';
 import PlayerCard from './PlayerCard';
 import LocationCard from './LocationCard';
 import ChampionshipTypeItem from './ChampionshipTypeItem';
+import config from '../config';
 
 export default function CreateChampionship({route, navigation}) {
   const {players, locations} = route.params;
@@ -19,7 +20,7 @@ export default function CreateChampionship({route, navigation}) {
       console.log('Creo campionato...');
       try {
         const response = await fetch(
-          'http://localhost:3003/create_championship',
+          config.host + ':' + config.port + '/create_championship',
           {
             method: 'POST',
             headers: {

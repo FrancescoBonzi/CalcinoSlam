@@ -8,6 +8,8 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
+import getPlayerImages from '../playerImages';
+import config from '../config';
 
 export default function MatchCard({
   item,
@@ -57,7 +59,10 @@ export default function MatchCard({
   const updateChampionshipStatus = async () => {
     try {
       const res = await fetch(
-        'http://localhost:3003/update_championship_status?id_match=' +
+        config.host +
+          ':' +
+          config.port +
+          '/update_championship_status?id_match=' +
           item.id_match +
           '&id_championship=' +
           details.id +
@@ -94,9 +99,7 @@ export default function MatchCard({
             <View style={styles.player_box_left}>
               <Image
                 style={styles.player_image}
-                source={{
-                  uri: t1p1.image,
-                }}
+                source={getPlayerImages(t1p1.id)}
               />
               <Text style={styles.player_username}>{t1p1.username}</Text>
             </View>
@@ -105,9 +108,7 @@ export default function MatchCard({
             <View style={styles.player_box_right}>
               <Image
                 style={styles.player_image}
-                source={{
-                  uri: t1p2.image,
-                }}
+                source={getPlayerImages(t1p2.id)}
               />
               <Text style={styles.player_username}>{t1p2.username}</Text>
             </View>
@@ -130,9 +131,7 @@ export default function MatchCard({
             onPress={press => checkAndSend()}>
             <Image
               style={styles.vs_image}
-              source={{
-                uri: 'http://localhost:3003/battle.png',
-              }}
+              source={require('../assets/battle.png')}
             />
           </TouchableOpacity>
         </View>
@@ -141,9 +140,7 @@ export default function MatchCard({
             <View style={styles.player_box_left}>
               <Image
                 style={styles.player_image}
-                source={{
-                  uri: t2p1.image,
-                }}
+                source={getPlayerImages(t2p1.id)}
               />
               <Text style={styles.player_username}>{t2p1.username}</Text>
             </View>
@@ -152,9 +149,7 @@ export default function MatchCard({
             <View style={styles.player_box_right}>
               <Image
                 style={styles.player_image}
-                source={{
-                  uri: t2p2.image,
-                }}
+                source={getPlayerImages(t2p2.id)}
               />
               <Text style={styles.player_username}>{t2p2.username}</Text>
             </View>
@@ -212,6 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 35,
     height: 35,
+    borderRadius: 35 / 2,
   },
   vs_image: {
     alignItems: 'center',

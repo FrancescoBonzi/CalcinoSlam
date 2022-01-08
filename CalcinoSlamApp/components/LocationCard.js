@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import getLocationImages from '../locationImages';
 
 export default function LocationCard({item, location, setLocation}) {
   return (
@@ -9,12 +10,7 @@ export default function LocationCard({item, location, setLocation}) {
           styles.container,
           {backgroundColor: location == item.id ? '#9cffb1' : '#c7e7ff'},
         ]}>
-        <Image
-          style={styles.image}
-          source={{
-            uri: item.image,
-          }}
-        />
+        <Image style={styles.image} source={getLocationImages(item.id)} />
         <Text style={styles.name}>{item.name}</Text>
       </View>
     </TouchableOpacity>
@@ -31,11 +27,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   image: {
-    width: '50%',
-    height: '50%',
+    width: 40,
+    height: 40,
     position: 'absolute',
-    top: '15%',
-    left: '25%',
+    left: '5%',
+    top: '10%',
   },
   name: {
     fontWeight: '600',

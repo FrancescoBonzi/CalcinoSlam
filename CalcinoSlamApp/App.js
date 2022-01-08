@@ -90,7 +90,7 @@ function HomeScreen({route, navigation}) {
       ) : (
         <>
           <Text style={styles.header}>Calcino{'\n'}Slam</Text>
-          <Image style={styles.logo} source={require('./assets/logo2.png')} />
+          <Image style={styles.logo} source={require('./assets/logo.png')} />
           <View style={styles.container}>
             <TouchableOpacity
               onPress={() => {

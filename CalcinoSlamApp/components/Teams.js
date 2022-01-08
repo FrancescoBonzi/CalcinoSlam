@@ -7,6 +7,8 @@ import {
   Image,
   Text,
 } from 'react-native';
+import getPlayerImages from '../playerImages';
+import config from '../config';
 
 export default function Teams({route, navigation}) {
   const {id_championship, players, locations} = route.params;
@@ -17,7 +19,10 @@ export default function Teams({route, navigation}) {
   const getDetails = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3003/get_championship_details?id_championship=' +
+        config.host +
+          ':' +
+          config.port +
+          '/get_championship_details?id_championship=' +
           id_championship,
       );
       const json = await response.json();
@@ -66,9 +71,7 @@ export default function Teams({route, navigation}) {
                       <View style={styles.player_box_left}>
                         <Image
                           style={styles.player_image}
-                          source={{
-                            uri: item[0].image,
-                          }}
+                          source={getPlayerImages(item[0].id)}
                         />
                         <Text style={styles.player_username}>
                           {item[0].username}
@@ -79,9 +82,7 @@ export default function Teams({route, navigation}) {
                       <View style={styles.player_box_right}>
                         <Image
                           style={styles.player_image}
-                          source={{
-                            uri: item[1].image,
-                          }}
+                          source={getPlayerImages(item[1].id)}
                         />
                         <Text style={styles.player_username}>
                           {item[1].username}
@@ -155,6 +156,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 50,
     height: 50,
+    borderRadius: 50 / 2,
   },
   player_username: {
     fontWeight: '600',

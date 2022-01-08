@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import MatchCard from './MatchCard';
 import ChampionshipChartItem from './ChampionshipChartItem';
+import config from '../config';
 
 export default function Noticeboard({route, navigation}) {
   const {id_championship, players, locations, details_} = route.params;
@@ -21,7 +22,10 @@ export default function Noticeboard({route, navigation}) {
   const deleteChampionship = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3003/delete_championship?id_championship=' +
+        config.host +
+          ':' +
+          config.port +
+          '/delete_championship?id_championship=' +
           id_championship,
       );
       const json = await response.json();
@@ -46,7 +50,10 @@ export default function Noticeboard({route, navigation}) {
   const getDetails = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3003/get_championship_details?id_championship=' +
+        config.host +
+          ':' +
+          config.port +
+          '/get_championship_details?id_championship=' +
           id_championship,
       );
       const json = await response.json();
@@ -59,7 +66,10 @@ export default function Noticeboard({route, navigation}) {
   const getChampionshipChart = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3003/get_championship_chart?id_championship=' +
+        config.host +
+          ':' +
+          config.port +
+          '/get_championship_chart?id_championship=' +
           id_championship,
       );
       const json = await response.json();

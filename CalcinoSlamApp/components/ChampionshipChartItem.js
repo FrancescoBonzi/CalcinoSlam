@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
+import getPlayerImages from '../playerImages';
 
 export default function ChampionshipChartItem({item, players}) {
   const p1 = players.find(o => o.id == item.id_players[0]);
@@ -7,21 +8,11 @@ export default function ChampionshipChartItem({item, players}) {
   return (
     <View style={styles.card}>
       <View style={styles.player_box_left}>
-        <Image
-          style={styles.player_image}
-          source={{
-            uri: p1.image,
-          }}
-        />
+        <Image style={styles.player_image} source={getPlayerImages(p1.id)} />
         <Text style={styles.player_username}>{p1.username}</Text>
       </View>
       <View style={styles.player_box_right}>
-        <Image
-          style={styles.player_image}
-          source={{
-            uri: p2.image,
-          }}
-        />
+        <Image style={styles.player_image} source={getPlayerImages(p2.id)} />
         <Text style={styles.player_username}>{p2.username}</Text>
       </View>
       <Text style={styles.final_position}>{item.final_position + 1}°</Text>
@@ -35,17 +26,15 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 28,
     color: '#f76c6c',
-    textAlign: 'center',
     position: 'absolute',
-    marginTop: 10,
+    top: '25%',
   },
   final_score: {
     fontWeight: '800',
     fontSize: 28,
-    color: 'blue',
-    textAlign: 'center',
+    color: '#a92a35',
     position: 'absolute',
-    marginTop: 50,
+    top: '70%',
   },
   card: {
     marginBottom: '3%',
@@ -53,6 +42,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 10,
     paddingBottom: 20,
     position: 'relative',
@@ -62,17 +52,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 20,
     position: 'relative',
-    marginHorizontal: '25%',
+    marginHorizontal: '20%',
   },
   player_box_right: {
     alignItems: 'center',
     paddingTop: 20,
     position: 'relative',
-    marginHorizontal: '25%',
+    marginHorizontal: '20%',
   },
   player_image: {
     alignItems: 'center',
-    width: 35,
-    height: 35,
+    width: 70,
+    height: 70,
+    borderRadius: 70 / 2,
+  },
+  player_username: {
+    top: '10%',
+    fontWeight: '700',
   },
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import getPlayerImages from '../playerImages';
 
 export default function PlayerCard({item, partecipants, setPartecipants}) {
   function addOrRemoveItem(id) {
@@ -23,12 +24,7 @@ export default function PlayerCard({item, partecipants, setPartecipants}) {
                 : '#c7e7ff',
             },
           ]}>
-          <Image
-            style={styles.image}
-            source={{
-              uri: item.image,
-            }}
-          />
+          <Image style={styles.image} source={getPlayerImages(item.id)} />
           <Text style={styles.username}>{item.username}</Text>
         </View>
       </TouchableOpacity>
@@ -52,16 +48,17 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   image: {
-    width: '50%',
-    height: '50%',
+    width: '60%',
+    height: '60%',
+    borderRadius: 100,
     position: 'absolute',
-    top: '15%',
-    left: '25%',
+    top: '10%',
+    left: '20%',
   },
   username: {
     fontWeight: '600',
     color: '#24305e',
     position: 'absolute',
-    top: '70%',
+    top: '75%',
   },
 });
