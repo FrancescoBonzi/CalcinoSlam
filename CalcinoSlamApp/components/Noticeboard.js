@@ -112,11 +112,11 @@ export default function Noticeboard({route, navigation}) {
               />
             </TouchableOpacity>
           </View>
-          <View>
-            <ScrollView>
-              {!finished ? (
-                <View style={styles.matches}>
-                  {details.matches.map((item, index) => (
+          <View style={{flex: 1}}>
+            {!finished ? (
+              <View style={{flex: 1}}>
+                <ScrollView style={{}}>
+                  {details.matches.map((item, _index) => (
                     <MatchCard
                       item={item}
                       players={players}
@@ -125,23 +125,23 @@ export default function Noticeboard({route, navigation}) {
                       getChampionshipChart={getChampionshipChart}
                     />
                   ))}
-                </View>
-              ) : (
-                <>
-                  <View>
-                    {chart.map((item, index) => (
-                      <ChampionshipChartItem item={item} players={players} />
-                    ))}
-                  </View>
+                </ScrollView>
+              </View>
+            ) : (
+              <View style={{flex: 1}}>
+                <ScrollView>
+                  {chart.map((item, _index) => (
+                    <ChampionshipChartItem item={item} players={players} />
+                  ))}
                   <View style={styles.btnContainer}>
                     <Button
                       title="Torna alla home"
                       onPress={() => navigation.navigate('Home')}
                     />
                   </View>
-                </>
-              )}
-            </ScrollView>
+                </ScrollView>
+              </View>
+            )}
           </View>
         </>
       )}
@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     borderRadius: 5,
     borderWidth: 0,
+    marginBottom: 100,
   },
   bin_image: {
     height: 25,

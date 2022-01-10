@@ -31,8 +31,8 @@ async function create_championship(location, type, id_player, organizer, name, c
         //championship
         let insert_championship_query = "INSERT INTO championships (id, type, date, organizer, name, location, image, in_progress, season, comment) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-        var [id_championship, _] = await utils.db_run(insert_championship_query, [null, type, utils.get_current_timestamp(), organizer, name, location, 'images/championships/default.png', 1, 1, comment])
-        let update_championship_query = "UPDATE championships SET image = 'images/championships/" + id_championship + ".png' WHERE id==" + id_championship
+        var [id_championship, _] = await utils.db_run(insert_championship_query, [null, type, utils.get_current_timestamp(), organizer, name, location, '', 1, 1, comment])
+        let update_championship_query = "UPDATE championships SET image = 'https://calcinoslam.duckdns.org/championships/" + id_championship + ".png' WHERE id==" + id_championship
         await utils.db_run(update_championship_query, [])
 
         //championships_players

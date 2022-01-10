@@ -15,19 +15,16 @@ export default function Onboarding({navigation}) {
 
   const getChart = async () => {
     try {
-      const response = await fetch(
-        config.host + ':' + config.port + '/get_chart',
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id_players: [],
-          }),
+      const response = await fetch(config.host + '/get_chart', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          id_players: [],
+        }),
+      });
       const json = await response.json();
       json.sort((a, b) => {
         return a.score < b.score;

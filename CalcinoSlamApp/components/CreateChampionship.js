@@ -10,33 +10,35 @@ export default function CreateChampionship({route, navigation}) {
   const [location, setLocation] = useState(null);
   const [partecipants, setPartecipants] = useState([]);
   const [type, setType] = useState(0);
+  let requestInProgress = false;
   const createChampionship = async () => {
+    if (requestInProgress) {
+      return 'Old request in progress...';
+    }
     const type_name = type == 0 ? 'GIRONE' : 'ELIMINAZIONE';
     if (location == null) {
       Alert.alert('Scegli uno stadio!');
     } else if (partecipants.length % 2 == 1) {
       Alert.alert('Scegli un numero pari di giocatori!');
     } else {
+      requestInProgress = true;
       console.log('Creo campionato...');
       try {
-        const response = await fetch(
-          config.host + ':' + config.port + '/create_championship',
-          {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              id_player: partecipants,
-              type: type_name,
-              location: location,
-              organizer: 1,
-              name: '',
-              comment: '',
-            }),
+        const response = await fetch(config.host + '/create_championship', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
           },
-        );
+          body: JSON.stringify({
+            id_player: partecipants,
+            type: type_name,
+            location: location,
+            organizer: 1,
+            name: '',
+            comment: '',
+          }),
+        });
         const json = await response.json();
         console.log('campionato', json);
         if (json.championship_approved) {
@@ -53,6 +55,8 @@ export default function CreateChampionship({route, navigation}) {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        requestInProgress = false;
       }
     }
   };
@@ -95,8 +99,7 @@ export default function CreateChampionship({route, navigation}) {
 
 const styles = StyleSheet.create({
   main_container: {
-    height: '100%',
-    width: '100%',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -130,5 +133,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     borderRadius: 5,
     borderWidth: 0,
+    marginBottom: '10%',
   },
 });

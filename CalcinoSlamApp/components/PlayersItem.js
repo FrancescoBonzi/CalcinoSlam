@@ -17,7 +17,7 @@ export default function PlayersItem({item}) {
   const getPrizes = async () => {
     try {
       const response = await fetch(
-        config.host + ':' + config.port + '/get_prizes?id_player=' + item.id,
+        config.host + '/get_prizes?id_player=' + item.id,
       );
       const json = await response.json();
       setNumChamp(json.length);
@@ -57,7 +57,9 @@ export default function PlayersItem({item}) {
                 <View style={styles.card}>
                   <Image
                     style={styles.prize_image}
-                    source={require('../assets/laurel.png')}
+                    source={{
+                      uri: item.image,
+                    }}
                   />
                   <Text style={styles.place}>{item.place + 1}</Text>
                   <View style={styles.box_info_prize}>

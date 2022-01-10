@@ -15,6 +15,7 @@ import Chart from './components/Chart';
 import Teams from './components/Teams';
 import Noticeboard from './components/Noticeboard';
 import CreateChampionship from './components/CreateChampionship';
+import config from './config';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,7 @@ function HomeScreen({route, navigation}) {
   const [players, setPlayers] = useState(null);
   const getLocations = async () => {
     try {
-      const response = await fetch('http://localhost:3003/get_locations', {
+      const response = await fetch(config.host + '/get_locations', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -42,7 +43,7 @@ function HomeScreen({route, navigation}) {
   };
   const getPlayers = async () => {
     try {
-      const response = await fetch('http://localhost:3003/get_players', {
+      const response = await fetch(config.host + '/get_players', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -61,7 +62,7 @@ function HomeScreen({route, navigation}) {
   const getChampionshipsInProgress = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3003/get_championships_in_progress?id_player=1',
+        config.host + '/get_championships_in_progress?id_player=1',
       );
       const json = await response.json();
       console.log(json);
