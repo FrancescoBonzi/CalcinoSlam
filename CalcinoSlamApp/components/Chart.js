@@ -9,7 +9,7 @@ import {
 import ChartItem from './ChartItem';
 import config from '../config';
 
-export default function Onboarding({navigation}) {
+export default function Chart({navigation}) {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
@@ -42,7 +42,7 @@ export default function Onboarding({navigation}) {
   }, []);
 
   return (
-    <View style={{width: '100%', backgroundColor: '#ffc7cc'}}>
+    <View style={{width: '100%', height: '100%', backgroundColor: '#ffc7cc'}}>
       {isLoading ? (
         <ActivityIndicator />
       ) : (

@@ -6,7 +6,6 @@ import {
   Image,
   useWindowDimensions,
   ScrollView,
-  ImageBackground,
 } from 'react-native';
 import getPlayerImages from '../playerImages';
 import getLocationImages from '../locationImages';
