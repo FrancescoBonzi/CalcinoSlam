@@ -20,9 +20,8 @@ async function create_championship(req, res, next) {
     let name = req.body.name
     let comment = req.body.comment
     let active_championship = await model.get_championships_in_progress(undefined)
-    console.log(active_championship)
     let response = ""
-    if (active_championship.length == 0) {
+    if (active_championship.length != 0) {
         response = {
             "championship_approved": false,
             "error": "already_exists",
