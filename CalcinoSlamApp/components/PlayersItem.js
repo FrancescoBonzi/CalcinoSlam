@@ -6,9 +6,46 @@ import {
   Image,
   useWindowDimensions,
   ScrollView,
+  ImageBackground,
 } from 'react-native';
 import getPlayerImages from '../playerImages';
+import getLocationImages from '../locationImages';
 import config from '../config';
+
+function castMonth(month) {
+  switch (month) {
+    case '01':
+      return 'Gennaio';
+    case '02':
+      return 'Febbraio';
+    case '03':
+      return 'Marzo';
+    case '04':
+      return 'Aprile';
+    case '05':
+      return 'Maggio';
+    case '06':
+      return 'Giugno';
+    case '07':
+      return 'Luglio';
+    case '08':
+      return 'Agosto';
+    case '09':
+      return 'Settembre';
+    case '10':
+      return 'Ottobre';
+    case '11':
+      return 'Novembre';
+    case '12':
+      return 'Dicembre';
+  }
+}
+
+function castDate(date) {
+  let day = date.substring(0, 11).split('-')[2];
+  let month = date.substring(0, 11).split('-')[1];
+  return parseInt(day) + ' ' + castMonth(month);
+}
 
 export default function PlayersItem({item}) {
   const {width} = useWindowDimensions();
@@ -21,7 +58,7 @@ export default function PlayersItem({item}) {
       );
       const json = await response.json();
       setNumChamp(json.length);
-      json.map(a => (a.date = a.date.substring(0, 11)));
+      json.map(a => (a.date = castDate(a.date)));
       setPrizes(json);
     } catch (error) {
       console.error(error);
@@ -34,18 +71,18 @@ export default function PlayersItem({item}) {
   }, []);
   return (
     <View style={[styles.container, {width}]}>
-      <Image style={styles.logo} source={require('../assets/logo.png')} />
       <View style={styles.header}>
         <Image style={styles.image} source={getPlayerImages(item.id)} />
         <View style={styles.right_header}>
           <Text style={styles.username}>{item.username}</Text>
+          <Text style={styles.role}>{item.role}</Text>
           <Text style={styles.championship_played}>
             {numChamp} campionati giocati
           </Text>
         </View>
       </View>
-      <View style={{height: 200, flex: 1}}>
-        <ScrollView style={{flex: 1, height: '100%'}}>
+      <View style={{flex: 1}}>
+        <ScrollView style={{flex: 1}}>
           <View style={styles.biography_section}>
             <Text style={styles.biography_header}>Biografia</Text>
             <Text style={styles.biography}>{item.biography}</Text>
@@ -54,17 +91,22 @@ export default function PlayersItem({item}) {
             <Text style={styles.biography_header}>Premi</Text>
             <View style={styles.prizes}>
               {prizes.map((item, index) => (
-                <View style={styles.card}>
+                <View key={index} style={styles.card}>
                   <Image
                     style={styles.prize_image}
                     source={{
                       uri: item.image,
                     }}
+                    key={item.id_championship}
+                  />
+                  <Image
+                    style={styles.location_image}
+                    source={getLocationImages(item.location)}
                   />
                   <Text style={styles.place}>{item.place + 1}</Text>
                   <View style={styles.box_info_prize}>
                     <Text style={styles.date}>{item.date}</Text>
-                    <Text style={styles.type}>{item.type}</Text>
+                    {/* <Text style={styles.type}>{item.type}</Text> */}
                   </View>
                 </View>
               ))}
@@ -77,16 +119,8 @@ export default function PlayersItem({item}) {
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    position: 'absolute',
-    height: 300,
-    width: 300,
-    right: '70%',
-    top: '50%',
-    opacity: 0.05,
-  },
   container: {
-    marginTop: '20%',
+    marginTop: '5%',
   },
   image: {
     width: 100,
@@ -110,6 +144,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginBottom: '10%',
+  },
+  role: {
+    alignSelf: 'center',
+    fontWeight: '500',
+    fontSize: 25,
   },
   championship_played: {
     alignSelf: 'center',
@@ -195,5 +234,13 @@ const styles = StyleSheet.create({
   date: {
     fontWeight: '500',
     fontSize: 10,
+    paddingTop: 10,
+  },
+  location_image: {
+    width: 30,
+    height: 30,
+    position: 'absolute',
+    right: 0,
+    bottom: '35%',
   },
 });

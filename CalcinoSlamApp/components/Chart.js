@@ -54,7 +54,7 @@ export default function Onboarding({navigation}) {
                 source={require('../assets/winner.png')}
               />
               {data.map((item, index) => (
-                <ChartItem item={item} index={index} />
+                <ChartItem key={index} item={item} index={index} />
               ))}
             </ScrollView>
           </View>
@@ -66,12 +66,13 @@ export default function Onboarding({navigation}) {
 
 const styles = StyleSheet.create({
   image: {
-    height: '15%',
+    height: 150,
     aspectRatio: 1,
     alignSelf: 'center',
   },
   container: {
     width: '90%',
     left: '5%',
+    paddingBottom: '10%',
   },
 });

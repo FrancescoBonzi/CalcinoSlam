@@ -19,10 +19,19 @@ async function create_championship(req, res, next) {
     let organizer = req.body.organizer
     let name = req.body.name
     let comment = req.body.comment
-    let response = await model.create_championship(location, type, id_player, organizer, name, comment)
+    let active_championship = await model.get_championships_in_progress(undefined)
+    let response = ""
+    if (active_championship.length == 0) {
+        response = {
+            "championship_approved": false,
+            "error": "already_exists",
+            "id_championship": active_championship[0].id,
+        }
+    } else {
+        response = await model.create_championship(location, type, id_player, organizer, name, comment)
+    }
     res.type("application/json")
     res.send(JSON.stringify(response))
-    return 0
 }
 
 async function get_players(req, res, next) {
@@ -43,7 +52,7 @@ async function login(req, res, next) {
     let id_player = req.body.id_player
     let password = req.body.password
     let player = await model.login(id_player, password)
-    if(player.length == 0) {
+    if (player.length == 0) {
         player = {
             "ok": false
         }
@@ -88,9 +97,9 @@ async function update_championship_status(req, res, next) {
     let team2_score = parseInt(req.query.team2_score)
     let update_success = await model.update_match_result(id_match, team1_score, team2_score)
     let result
-    if (update_success){
+    if (update_success) {
         result = await utils.championship_manager(id_championship)
-    }else{
+    } else {
         result = {
             "error": "error in the update of the match score"
         }
@@ -106,21 +115,21 @@ async function get_chart(req, res, next) {
     res.send(JSON.stringify(chart))
 }
 
-async function get_championship_chart(req, res, next){
+async function get_championship_chart(req, res, next) {
     let id_championship = req.query.id_championship
     let chart = await utils.chart_manager(id_championship)
     res.type("application/json")
     res.send(JSON.stringify(chart))
 }
 
-async function delete_championship(req, res, next){
+async function delete_championship(req, res, next) {
     let id_championship = req.query.id_championship
     let result = await model.delete_championship(id_championship)
     res.type("application/json")
     res.send(JSON.stringify(result))
 }
 
-async function get_prizes(req, res, next){
+async function get_prizes(req, res, next) {
     let id_player = req.query.id_player
     let prizes = await model.get_prizes(id_player)
     res.type("application/json")

@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS players (
 	username text NOT NULL UNIQUE,
 	password text DEFAULT 'versicalabresi',
 	image text,
+	role text,
 	sex text,
 	biography text,
 	mail text,

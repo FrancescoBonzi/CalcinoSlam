@@ -23,7 +23,7 @@ async function create_championship(location, type, id_player, organizer, name, c
         (id_player.length % 2 == 1)) {
         result = {
             "championship_approved": false,
-            "error": "championship type not supported"
+            "error": "type"
         }
     } else if ((type == 'GIRONE' && id_player.length >= 6 && id_player.length <= 12) ||
         (type == 'ELIMINAZIONE' && id_player.length >= 8 && id_player.length <= 16)) {
@@ -55,7 +55,7 @@ async function create_championship(location, type, id_player, organizer, name, c
     } else {
         result = {
             "championship_approved": false,
-            "error": "wrong number of players"
+            "error": "players_number"
         }
     }
 

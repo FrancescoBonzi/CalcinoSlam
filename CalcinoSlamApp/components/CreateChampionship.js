@@ -49,9 +49,21 @@ export default function CreateChampionship({route, navigation}) {
             locations: locations,
           });
         } else {
-          Alert.alert(
-            'Hai scelto un numero sbagliato di giocatori!\nGirone da 6 a 12\nEliminazione da 8 a 16',
-          );
+          if (json.error == 'type') {
+            Alert.alert('Scegli tra GIRONE ed ELIMINAZIONE');
+          } else if (json.error == 'players_number') {
+            Alert.alert(
+              'Hai scelto un numero sbagliato di giocatori!\nGirone da 6 a 12\nEliminazione da 8 a 16',
+            );
+          } else if (json.error == 'already_exists') {
+            Alert.alert('Esiste già un campionato');
+            navigation.navigate('Noticeboard', {
+              id_championship: json.id_championship,
+              players: players,
+              locations: locations,
+              details_: null,
+            });
+          }
         }
       } catch (error) {
         console.error(error);
@@ -76,6 +88,7 @@ export default function CreateChampionship({route, navigation}) {
               item={item}
               location={location}
               setLocation={setLocation}
+              key={index}
             />
           ))}
         </View>
@@ -86,6 +99,7 @@ export default function CreateChampionship({route, navigation}) {
               item={item}
               partecipants={partecipants}
               setPartecipants={setPartecipants}
+              key={index}
             />
           ))}
         </View>

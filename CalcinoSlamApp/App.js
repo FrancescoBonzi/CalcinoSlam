@@ -65,7 +65,6 @@ function HomeScreen({route, navigation}) {
         config.host + '/get_championships_in_progress?id_player=1',
       );
       const json = await response.json();
-      console.log(json);
       setChampionshipInProgress(json);
     } catch (error) {
       console.error(error);
