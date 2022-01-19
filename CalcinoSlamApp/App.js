@@ -14,6 +14,7 @@ import Players from './components/Players';
 import Chart from './components/Chart';
 import Teams from './components/Teams';
 import Noticeboard from './components/Noticeboard';
+import ChampionshipChart from './components/ChampionshipChart';
 import CreateChampionship from './components/CreateChampionship';
 import config from './config';
 
@@ -201,6 +202,11 @@ export default function App() {
               />
             ),
           })}
+        />
+        <Stack.Screen
+          name="ChampionshipChart"
+          component={ChampionshipChart}
+          options={{title: 'Classifica Campionato'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

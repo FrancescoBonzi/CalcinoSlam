@@ -16,7 +16,7 @@ export default function MatchCard({
   players,
   details,
   getNewMatches,
-  getChampionshipChart,
+  openChampionshipChart,
 }) {
   const [editableText, setEditableText] = useState(true);
   const [scoreLeft, setScoreLeft] = useState(
@@ -73,9 +73,9 @@ export default function MatchCard({
       );
       const json = await res.json();
       if (json.new_matches === true && json.championship_end === false) {
-        getNewMatches();
+        getNewMatches({id_championship: details.id});
       } else if (json.new_matches === false && json.championship_end === true) {
-        getChampionshipChart();
+        openChampionshipChart();
       }
     } catch (error) {
       console.error(error);

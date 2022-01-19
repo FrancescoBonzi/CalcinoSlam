@@ -5,20 +5,18 @@ import {
   StyleSheet,
   Text,
   ScrollView,
-  Button,
   Image,
   TouchableOpacity,
   Alert,
+  Animated,
+  Easing,
 } from 'react-native';
 import MatchCard from './MatchCard';
-import ChampionshipChartItem from './ChampionshipChartItem';
 import config from '../config';
 
 export default function Noticeboard({route, navigation}) {
-  const {id_championship, players, locations, details_} = route.params;
-  const [details, setDetails] = useState(details_);
-  const [chart, setChart] = useState(null);
-  const [finished, setFinished] = useState(false);
+  const {id_championship, players, locations, initialDetails} = route.params;
+  const [details, setDetails] = useState(initialDetails);
   const deleteChampionship = async () => {
     try {
       const response = await fetch(
@@ -57,37 +55,46 @@ export default function Noticeboard({route, navigation}) {
           id_championship,
       );
       const json = await response.json();
+      let fail_json = JSON.parse(JSON.stringify(json));
+      fail_json.matches = [];
       console.log(json);
+      //setDetails(fail_json);
       setDetails(json);
     } catch (error) {
       console.error(error);
     }
   };
-  const getChampionshipChart = async () => {
-    try {
-      const response = await fetch(
-        config.host +
-          ':' +
-          config.port +
-          '/get_championship_chart?id_championship=' +
-          id_championship,
-      );
-      const json = await response.json();
-      console.log(json);
-      setChart(json);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setFinished(true);
-    }
+  const openChampionshipChart = async () => {
+    navigation.navigate('ChampionshipChart', {
+      id_championship: id_championship,
+      players: players,
+      locations: locations,
+      details: details,
+    });
   };
 
   useEffect(() => {
-    if (details_ == null) {
+    if (initialDetails == null) {
       getDetails();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
+
+  let spinValue = new Animated.Value(0);
+
+  // First set up animation
+  Animated.timing(spinValue, {
+    toValue: 1,
+    duration: 1000,
+    easing: Easing.linear, // Easing is an additional import from react-native
+    useNativeDriver: true, // To make use of native driver for performance
+  }).start();
+
+  // Next, interpolate beginning and end values (in this case 0 and 1)
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   return (
     <View style={styles.container}>
@@ -111,37 +118,30 @@ export default function Noticeboard({route, navigation}) {
                 source={require('../assets/bin.png')}
               />
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.refresh_image_container}
+              onPress={() => getDetails()}>
+              <Animated.View style={{transform: [{rotate: spin}]}}>
+                <Image
+                  style={styles.bin_image}
+                  source={require('../assets/refresh.png')}
+                />
+              </Animated.View>
+            </TouchableOpacity>
           </View>
           <View style={{flex: 1}}>
-            {!finished ? (
-              <View style={{flex: 1}}>
-                <ScrollView style={{}}>
-                  {details.matches.map((item, _index) => (
-                    <MatchCard
-                      item={item}
-                      players={players}
-                      details={details}
-                      getNewMatches={getDetails}
-                      getChampionshipChart={getChampionshipChart}
-                    />
-                  ))}
-                </ScrollView>
-              </View>
-            ) : (
-              <View style={{flex: 1}}>
-                <ScrollView>
-                  {chart.map((item, _index) => (
-                    <ChampionshipChartItem item={item} players={players} />
-                  ))}
-                  <View style={styles.btnContainer}>
-                    <Button
-                      title="Torna alla home"
-                      onPress={() => navigation.navigate('Home')}
-                    />
-                  </View>
-                </ScrollView>
-              </View>
-            )}
+            <ScrollView>
+              {details.matches.map((item, index) => (
+                <MatchCard
+                  item={item}
+                  players={players}
+                  details={details}
+                  getNewMatches={getDetails}
+                  openChampionshipChart={openChampionshipChart}
+                  key={item.id_match}
+                />
+              ))}
+            </ScrollView>
           </View>
         </>
       )}
@@ -197,6 +197,11 @@ const styles = StyleSheet.create({
   bin_image_container: {
     position: 'absolute',
     right: 10,
+    top: 10,
+  },
+  refresh_image_container: {
+    position: 'absolute',
+    left: 10,
     top: 10,
   },
 });

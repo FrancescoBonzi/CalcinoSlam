@@ -79,7 +79,7 @@ async function get_championship_matches(id_championship) {
             "id_match": championship_matches[i]["id_match"],
             "team1": championship_matches[i]["team1"],
             "team2": championship_matches[i]["team2"],
-            "score": [championship_matches[i]["team1_score"], championship_matches[i]["team2_score"]],
+            "score": JSON.stringify([championship_matches[i]["team1_score"], championship_matches[i]["team2_score"]]),
             "id_noticeboard": championship_matches[i]["id_noticeboard"]
         })
     }
