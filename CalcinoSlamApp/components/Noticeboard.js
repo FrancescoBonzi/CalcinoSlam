@@ -55,10 +55,7 @@ export default function Noticeboard({route, navigation}) {
           id_championship,
       );
       const json = await response.json();
-      let fail_json = JSON.parse(JSON.stringify(json));
-      fail_json.matches = [];
       console.log(json);
-      //setDetails(fail_json);
       setDetails(json);
     } catch (error) {
       console.error(error);

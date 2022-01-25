@@ -75,11 +75,12 @@ async function get_championship_matches(id_championship) {
 
     let matches = []
     for (let i = 0; i < championship_matches.length; i++) { 
+        var score = {"team1": championship_matches[i]["team1_score"], "team2": championship_matches[i]["team2_score"]}
         matches.push({
             "id_match": championship_matches[i]["id_match"],
             "team1": championship_matches[i]["team1"],
             "team2": championship_matches[i]["team2"],
-            "score": [championship_matches[i]["team1_score"], championship_matches[i]["team2_score"]],
+            "score": score,
             "id_noticeboard": championship_matches[i]["id_noticeboard"]
         })
     }
@@ -93,6 +94,7 @@ async function get_championship_matches(id_championship) {
     for (let i = 0; i < num_teams; i++) {
         championship_teams[i.toString()] = [championship_teams_DB[i].player1, championship_teams_DB[i].player2]
     }
+    console.log(typeof(matches[0].score), matches)
 
     return {
         "num_teams": num_teams,
