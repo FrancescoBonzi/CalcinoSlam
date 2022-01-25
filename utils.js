@@ -96,7 +96,7 @@ async function championship_manager(id_championship) {
             }
             let all_played = (details.matches.length == 0) ? false : true
             for (let i=0; i<details.matches.length; i++) {
-                if (details.matches[i].score[0] == null) {
+                if (details.matches[i].score.team1 == null) {
                     all_played = false
                     break
                 }
@@ -114,7 +114,7 @@ async function championship_manager(id_championship) {
             } else {
                 let all_played = true
                 for (let i = 0; i < details.matches.length; i++) {
-                    if (details.matches[i].score[0] == null) {
+                    if (details.matches[i].score.team1 == null) {
                         all_played = false
                         break
                     }
