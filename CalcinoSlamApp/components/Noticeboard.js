@@ -55,9 +55,10 @@ export default function Noticeboard({route, navigation}) {
           id_championship,
       );
       const json = await response.json();
-      console.log(json);
-      console.log(typeof json.matches[0].score);
       setDetails(json);
+      if (json.in_progress == 0) {
+        await openChampionshipChart();
+      }
     } catch (error) {
       console.error(error);
     }

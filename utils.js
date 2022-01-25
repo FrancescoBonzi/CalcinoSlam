@@ -173,8 +173,8 @@ async function championship_manager(id_championship) {
 
 function match_chart(match) {
     return {
-        "winner": match.score[0] > match.score[1] ? match.team1 : match.team2,
-        "loser": match.score[0] > match.score[1] ? match.team2 : match.team1
+        "winner": match.score.team1 > match.score.team2 ? match.team1 : match.team2,
+        "loser": match.score.team1 > match.score.team2 ? match.team2 : match.team1
     }
 }
 
@@ -210,19 +210,6 @@ function manager_case_5teams(details) {
             break
     }
     return new_matches
-}
-
-function parent_match_standardtree(winner) {     //returns id_noticeboard of the match (within the first round) in which
-    //the "winner" was NOT present
-    /*
-    if (Math.floor(winner/2) > 0){
-        return 0
-    }else{
-        return 1
-    }
-    */
-
-    return Math.floor(winner / 2) > 0 ? 0 : 1
 }
 
 function manager_case_6teams(details) {
