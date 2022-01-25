@@ -56,6 +56,7 @@ export default function Noticeboard({route, navigation}) {
       );
       const json = await response.json();
       console.log(json);
+      console.log(typeof json.matches[0].score);
       setDetails(json);
     } catch (error) {
       console.error(error);

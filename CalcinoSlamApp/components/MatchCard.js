@@ -20,10 +20,10 @@ export default function MatchCard({
 }) {
   const [editableText, setEditableText] = useState(true);
   const [scoreLeft, setScoreLeft] = useState(
-    item.score.team1 == null ? '-' : item.score.team1.toString(),
+    item.score[0] == null ? '-' : item.score[0].toString(),
   );
   const [scoreRight, setScoreRight] = useState(
-    item.score.team2 == null ? '-' : item.score.team2.toString(),
+    item.score[1] == null ? '-' : item.score[1].toString(),
   );
   const t1p1 = players.find(o => o.id == details.teams[item.team1][0]);
   const t1p2 = players.find(o => o.id == details.teams[item.team1][1]);

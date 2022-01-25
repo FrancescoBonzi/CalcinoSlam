@@ -74,16 +74,12 @@ async function get_championship_matches(id_championship) {
     let championship_matches = await utils.db_all(query_matches)
 
     let matches = []
-    for (let i = 0; i < championship_matches.length; i++) { 
-        var score = {
-            "team1": championship_matches[i]["team1_score"], 
-            "team2": championship_matches[i]["team2_score"]
-        }
+    for (let i = 0; i < championship_matches.length; i++) {
         matches.push({
             "id_match": championship_matches[i]["id_match"],
             "team1": championship_matches[i]["team1"],
             "team2": championship_matches[i]["team2"],
-            "score": JSON.stringify(score),
+            "score": [championship_matches[i]["team1_score"], championship_matches[i]["team2_score"]],
             "id_noticeboard": championship_matches[i]["id_noticeboard"]
         })
     }
