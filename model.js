@@ -76,14 +76,14 @@ async function get_championship_matches(id_championship) {
     let matches = []
     for (let i = 0; i < championship_matches.length; i++) { 
         var score = {
-            "team1": 2, //championship_matches[i]["team1_score"], 
-            "team2": 5 //championship_matches[i]["team2_score"]
+            "team1": championship_matches[i]["team1_score"], 
+            "team2": championship_matches[i]["team2_score"]
         }
         matches.push({
             "id_match": championship_matches[i]["id_match"],
             "team1": championship_matches[i]["team1"],
             "team2": championship_matches[i]["team2"],
-            "score": score,
+            "score": JSON.stringify(score),
             "id_noticeboard": championship_matches[i]["id_noticeboard"]
         })
     }
