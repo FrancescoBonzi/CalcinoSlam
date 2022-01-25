@@ -75,7 +75,10 @@ async function get_championship_matches(id_championship) {
 
     let matches = []
     for (let i = 0; i < championship_matches.length; i++) { 
-        var score = {"team1": championship_matches[i]["team1_score"], "team2": championship_matches[i]["team2_score"]}
+        var score = {
+            "team1": 2, //championship_matches[i]["team1_score"], 
+            "team2": 5 //championship_matches[i]["team2_score"]
+        }
         matches.push({
             "id_match": championship_matches[i]["id_match"],
             "team1": championship_matches[i]["team1"],
