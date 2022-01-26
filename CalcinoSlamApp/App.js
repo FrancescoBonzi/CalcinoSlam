@@ -100,7 +100,7 @@ function HomeScreen({route, navigation}) {
                     id_championship: championshipInProgress[0].id,
                     players: players,
                     locations: locations,
-                    details_: null,
+                    initialDetails: null,
                   });
                 } else {
                   navigation.navigate('CreateChampionship', {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     opacity: 0.1,
   },
   header: {
-    fontWeight: '800',
+    fontWeight: '700',
     fontSize: 60,
     flex: 0.3,
     left: '5%',
@@ -244,11 +244,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   championship_image: {
-    width: 150,
-    height: 150,
+    width: 130,
+    height: 130,
     position: 'absolute',
-    right: '5%',
-    bottom: '10%',
+    right: '7%',
+    bottom: '12%',
   },
   bottom_cards: {
     flexDirection: 'row',

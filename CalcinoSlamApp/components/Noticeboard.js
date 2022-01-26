@@ -54,11 +54,32 @@ export default function Noticeboard({route, navigation}) {
           '/get_championship_details?id_championship=' +
           id_championship,
       );
-      const json = await response.json();
-      setDetails(json);
-      if (json.in_progress == 0) {
-        await openChampionshipChart();
+      let json = await response.json();
+      console.log(JSON.stringify(json));
+      if (details != null) {
+        let not_updated_matches = [];
+        for (let i = 0; i < details.matches.length; i++) {
+          if (
+            !(
+              details.matches[i].score.team1 == null &&
+              json.matches[i].score.team1 != null
+            )
+          ) {
+            not_updated_matches.push(details.matches[i]);
+          }
+        }
+        if (not_updated_matches.length != details.matches.length) {
+          let fake_details = {
+            id: details.id,
+            type: details.type,
+            location: details.location,
+            teams: details.teams,
+            matches: not_updated_matches,
+          };
+          setDetails(fake_details);
+        }
       }
+      setDetails(json);
     } catch (error) {
       console.error(error);
     }

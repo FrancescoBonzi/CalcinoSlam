@@ -11,6 +11,97 @@ import {
 import getPlayerImages from '../playerImages';
 import config from '../config';
 
+function getMatchTitle(type, num_teams, id_noticeboard) {
+  if (type == 'GIRONE') {
+    return id_noticeboard;
+  } else if (type == 'ELIMINAZIONE') {
+    if (num_teams == 4) {
+      switch (id_noticeboard) {
+        case 0:
+          return 'Primo round';
+        case 1:
+          return 'Primo round';
+        case 2:
+          return 'Finale';
+        case 3:
+          return 'Spareggio';
+        default:
+          return id_noticeboard;
+      }
+    } else if (num_teams == 5) {
+      switch (id_noticeboard) {
+        case 0:
+          return 'Primo round';
+        case 1:
+          return 'Primo round';
+        case 2:
+          return 'Semifinale';
+        case 3:
+          return 'Finale';
+        case 4:
+          return 'Spareggio';
+        default:
+          return id_noticeboard;
+      }
+    } else if (num_teams == 6) {
+      switch (id_noticeboard) {
+        case 0:
+          return 'Primo round';
+        case 1:
+          return 'Primo round';
+        case 2:
+          return 'Primo round';
+        case 3:
+          return 'Semifinale';
+        case 4:
+          return 'Finale';
+        case 5:
+          return 'Spareggio';
+        default:
+          return id_noticeboard;
+      }
+    } else if (num_teams == 7) {
+      switch (id_noticeboard) {
+        case 0:
+          return 'Primo round';
+        case 1:
+          return 'Primo round';
+        case 2:
+          return 'Primo round';
+        case 3:
+          return 'Semifinale';
+        case 4:
+          return 'Semifinale';
+        case 5:
+          return 'Finale';
+        case 6:
+          return 'Spareggio';
+        default:
+          return id_noticeboard;
+      }
+    } else if (num_teams == 8) {
+      switch (id_noticeboard) {
+        case 0:
+          return 'Primo round';
+        case 1:
+          return 'Primo round';
+        case 2:
+          return 'Primo round';
+        case 3:
+          return 'Semifinale';
+        case 4:
+          return 'Semifinale';
+        case 5:
+          return 'Finale';
+        case 6:
+          return 'Spareggio';
+        default:
+          return id_noticeboard;
+      }
+    }
+  }
+}
+
 export default function MatchCard({
   item,
   players,
@@ -84,7 +175,7 @@ export default function MatchCard({
   const checkAndSend = async () => {
     if (pattern.test(scoreLeft) && pattern.test(scoreRight)) {
       setEditableText(false);
-      let response = await updateChampionshipStatus();
+      await updateChampionshipStatus();
       setBackColor('#9cffb1');
     } else {
       Alert.alert('Hai scritto male il punteggio!');
@@ -94,6 +185,9 @@ export default function MatchCard({
   return (
     <View>
       <View style={[styles.card, {backgroundColor: backColor}]}>
+        <Text style={styles.noticeboard}>
+          {getMatchTitle(details.type, details.num_teams, item.id_noticeboard)}
+        </Text>
         <View style={styles.card_left}>
           <View style={styles.team_box_left}>
             <View style={styles.player_box_left}>
@@ -185,11 +279,13 @@ const styles = StyleSheet.create({
   },
   card_left: {
     position: 'absolute',
+    top: '80%',
     width: '30%',
     left: '17%',
   },
   card_right: {
     position: 'absolute',
+    top: '80%',
     width: '30%',
     right: '17%',
   },
@@ -211,6 +307,7 @@ const styles = StyleSheet.create({
   },
   vs_image: {
     alignItems: 'center',
+    top: '50%',
     width: 70,
     height: 70,
   },
@@ -232,5 +329,11 @@ const styles = StyleSheet.create({
   score_text: {
     fontSize: 40,
     fontWeight: '800',
+  },
+  noticeboard: {
+    margin: 15,
+    fontSize: 16,
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
 });
