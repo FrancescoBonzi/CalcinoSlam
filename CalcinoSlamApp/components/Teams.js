@@ -11,6 +11,31 @@ import {
 import getPlayerImages from '../playerImages';
 import config from '../config';
 
+function TeamCard({item, key}) {
+  return (
+    <View style={styles.team}>
+      <View style={styles.team_box_left}>
+        <View style={styles.player_box_left}>
+          <Image
+            style={styles.player_image}
+            source={getPlayerImages(item[0].id)}
+          />
+          <Text style={styles.player_username}>{item[0].username}</Text>
+        </View>
+      </View>
+      <View style={styles.team_box_right}>
+        <View style={styles.player_box_right}>
+          <Image
+            style={styles.player_image}
+            source={getPlayerImages(item[1].id)}
+          />
+          <Text style={styles.player_username}>{item[1].username}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 export default function Teams({route, navigation}) {
   const {id_championship, players, locations} = route.params;
   const [isLoading, setLoading] = useState(true);
@@ -37,7 +62,6 @@ export default function Teams({route, navigation}) {
         ]);
       }
       setTeams(ts);
-      console.log(ts);
     } catch (error) {
       console.error(error);
     } finally {
@@ -70,32 +94,7 @@ export default function Teams({route, navigation}) {
               </View>
               <View style={styles.teams}>
                 {teams.map((item, index) => (
-                  <>
-                    <View style={styles.team}>
-                      <View style={styles.team_box_left}>
-                        <View style={styles.player_box_left}>
-                          <Image
-                            style={styles.player_image}
-                            source={getPlayerImages(item[0].id)}
-                          />
-                          <Text style={styles.player_username}>
-                            {item[0].username}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.team_box_right}>
-                        <View style={styles.player_box_right}>
-                          <Image
-                            style={styles.player_image}
-                            source={getPlayerImages(item[1].id)}
-                          />
-                          <Text style={styles.player_username}>
-                            {item[1].username}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  </>
+                  <TeamCard item={item} key={index} />
                 ))}
               </View>
 

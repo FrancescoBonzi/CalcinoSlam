@@ -13,7 +13,7 @@ import config from '../config';
 
 function getMatchTitle(type, num_teams, id_noticeboard) {
   if (type == 'GIRONE') {
-    return id_noticeboard;
+    return 'Round girone';
   } else if (type == 'ELIMINAZIONE') {
     if (num_teams == 4) {
       switch (id_noticeboard) {
