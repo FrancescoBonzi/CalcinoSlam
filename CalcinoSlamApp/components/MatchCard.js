@@ -174,9 +174,15 @@ export default function MatchCard({
   };
   const checkAndSend = async () => {
     if (pattern.test(scoreLeft) && pattern.test(scoreRight)) {
-      setEditableText(false);
-      await updateChampionshipStatus();
-      setBackColor('#9cffb1');
+      if (scoreLeft == scoreRight) {
+        Alert.alert('Una delle due squadre deve vincere!');
+      } else if (scoreLeft != '10' && scoreRight != '10') {
+        Alert.alert('Si arriva a 10!');
+      } else {
+        setEditableText(false);
+        await updateChampionshipStatus();
+        setBackColor('#9cffb1');
+      }
     } else {
       Alert.alert('Hai scritto male il punteggio!');
     }
