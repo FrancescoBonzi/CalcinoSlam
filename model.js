@@ -154,7 +154,6 @@ async function get_chart(id_players) {
     } catch {
         in_progress_championships = -1
     }
-    console.log(in_progress_championships)
 
     // get chart without grufi and in progress championship
     query = "SELECT id_player, username, image,  CAST(AVG(score)*(1-1.0/COUNT(*)) AS INT) AS score FROM championships_players INNER JOIN players ON id_player = id WHERE role<>'Grufo' AND id_championship<>" + in_progress_championships + " GROUP BY id;"
@@ -237,7 +236,18 @@ async function delete_championship(id_championship) {
 }
 
 async function get_prizes(id_player) {
-    let query = "SELECT * FROM championships_players INNER JOIN championships ON id_championship = id WHERE id_player==" + id_player + ";"
+    // get not in progress championship id
+    let query = "SELECT id FROM championships WHERE in_progress==1"
+    let in_progress_championships = await utils.db_all(query)
+    try {
+        in_progress_championships = in_progress_championships[0].id
+    } catch {
+        in_progress_championships = -1
+    }
+    console.log(in_progress_championships)
+
+    // get prizes without in progress championship
+    query = "SELECT * FROM championships_players INNER JOIN championships ON id_championship = id WHERE id_player==" + id_player + " AND id_championship==" + in_progress_championships + ";"
     let prizes = await utils.db_all(query)
     return prizes
 }
