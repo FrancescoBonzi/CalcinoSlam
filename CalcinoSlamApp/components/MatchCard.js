@@ -88,12 +88,14 @@ function getMatchTitle(type, num_teams, id_noticeboard) {
         case 2:
           return 'Primo round';
         case 3:
-          return 'Semifinale';
+          return 'Primo round';
         case 4:
           return 'Semifinale';
         case 5:
-          return 'Finale';
+          return 'Semifinale';
         case 6:
+          return 'Finale';
+        case 7:
           return 'Spareggio';
         default:
           return id_noticeboard;
