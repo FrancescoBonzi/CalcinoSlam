@@ -46,6 +46,8 @@ export default function getPlayerImages(id) {
       return require('./assets/players/22.jpg');
     case 23:
       return require('./assets/players/23.jpg');
+    case 24:
+      return require('./assets/players/24.jpg');
     default:
       return require('./assets/players/profile.png');
   }
