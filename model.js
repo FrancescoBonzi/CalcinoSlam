@@ -244,7 +244,6 @@ async function get_prizes(id_player) {
     } catch {
         in_progress_championships = -1
     }
-    console.log(in_progress_championships)
 
     // get prizes without in progress championship
     query = "SELECT * FROM championships_players INNER JOIN championships ON id_championship = id WHERE id_player==" + id_player + " AND id_championship<>" + in_progress_championships + ";"
