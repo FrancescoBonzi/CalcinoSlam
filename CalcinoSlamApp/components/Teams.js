@@ -57,8 +57,8 @@ export default function Teams({route, navigation}) {
       for (let i = 0; i < json.num_teams; i++) {
         var pt = json.teams[i];
         ts.push([
-          players.find(o => o.id == pt[0]),
-          players.find(o => o.id == pt[1]),
+          players.find(o => o.id === pt[0]),
+          players.find(o => o.id === pt[1]),
         ]);
       }
       setTeams(ts);
@@ -89,10 +89,10 @@ export default function Teams({route, navigation}) {
                 />
                 <Text>{details.name}</Text>
                 <Text style={styles.location}>
-                  {locations.find(o => o.id == details.location).name}
+                  {locations.find(o => o.id === details.location).name}
                 </Text>
               </View>
-              <View style={styles.teams}>
+              <View style={styles.team}>
                 {teams.map((item, index) => (
                   <TeamCard item={item} key={index} />
                 ))}

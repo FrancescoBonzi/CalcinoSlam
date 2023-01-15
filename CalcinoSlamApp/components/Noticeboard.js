@@ -68,7 +68,7 @@ export default function Noticeboard({route, navigation}) {
             not_updated_matches.push(details.matches[i]);
           }
         }
-        if (not_updated_matches.length != details.matches.length) {
+        if (not_updated_matches.length !== details.matches.length) {
           let fake_details = {
             id: details.id,
             type: details.type,
