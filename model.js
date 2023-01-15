@@ -147,10 +147,15 @@ async function get_championships_in_progress(id_player) {
 
 async function get_chart(id_players) {
     // get not in progress championship id
-    // let query = "SELECT id FROM championships WHERE in_progress==1"
-    // let in_progress_championships = await utils.db_all(query)
-    // in_progress_championships = JSON.parse(JSON.stringify(in_progress_championships))[0].id
-    in_progress_championships = -1
+    let query = "SELECT id FROM championships WHERE in_progress==1"
+    let in_progress_championships = await utils.db_all(query)
+    try {
+        in_progress_championships = in_progress_championships[0].id
+    } catch {
+        in_progress_championships = -1
+    }
+    console.log(in_progress_championships)
+
     // get chart without grufi and in progress championship
     query = "SELECT id_player, username, image,  CAST(AVG(score)*(1-1.0/COUNT(*)) AS INT) AS score FROM championships_players INNER JOIN players ON id_player = id WHERE role<>'Grufo' AND id_championship<>" + in_progress_championships + " GROUP BY id;"
     if (id_players.length != 0) {
