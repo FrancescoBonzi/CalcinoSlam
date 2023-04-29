@@ -2,7 +2,6 @@ name: Build iOS app
 on: [push]
 jobs:
   build:
-    needs: install_deps
     runs-on: macos-latest
     steps:
       - name: Check out repository code
