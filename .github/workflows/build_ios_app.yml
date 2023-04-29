@@ -9,4 +9,7 @@ jobs:
       - run: |
           cd CalcinoSlamApp
           npm i
+          cd ios
+          pod install
+          cd ..
           npm run ios
