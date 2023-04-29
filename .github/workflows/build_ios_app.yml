@@ -6,14 +6,15 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: cd CalcinoSlamApp
-      - run: npm i
+      - run: |
+        cd CalcinoSlamApp
+        npm i
   build:
     needs: install_deps
     runs-on: macos-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: cd CalcinoSlamApp
-      - run: pwd
-      - run: npm run ios
+      - run: |
+        cd CalcinoSlamApp
+        npm run ios
