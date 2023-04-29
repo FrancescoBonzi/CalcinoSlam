@@ -6,6 +6,19 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: CalcinoSlamApp/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+      - uses: actions/cache@v3
+        id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+        with:
+          path: CalcinoSlamApp/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - run: |
           cd CalcinoSlamApp
           npm i
