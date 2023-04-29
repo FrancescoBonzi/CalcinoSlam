@@ -1,0 +1,15 @@
+name: Build iOS app
+on: [push]
+jobs:
+  install_deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: npm i
+  build:
+    needs: install_deps
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
