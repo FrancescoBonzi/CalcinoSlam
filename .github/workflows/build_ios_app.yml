@@ -24,7 +24,6 @@ jobs:
           npm i
           cd ios
           pod install
-          cd ..
           xcodebuild archive -workspace CalcinoSlamApp.xcworkspace -configuration Debug -scheme CalcinoSlamApp -archivePath CalcinoSlamApp.xcarchive
       - name: Archive iOS production artifacts
         uses: actions/upload-artifact@v3
