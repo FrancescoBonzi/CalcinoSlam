@@ -6,6 +6,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - run: cd CalcinoSlamApp
       - run: npm i
   build:
     needs: install_deps
@@ -13,3 +14,5 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - run: cd CalcinoSlamApp
+      - run: npm run ios
