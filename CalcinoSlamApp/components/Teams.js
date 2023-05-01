@@ -13,7 +13,7 @@ import config from '../config';
 
 function TeamCard({item, key}) {
   return (
-    <View style={styles.team}>
+    <View style={styles.team_card}>
       <View style={styles.team_box_left}>
         <View style={styles.player_box_left}>
           <Image
@@ -75,43 +75,40 @@ export default function Teams({route, navigation}) {
   }, []);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, justifyContent: 'center'}}>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
         <>
           <View style={{flex: 1}}>
-            <ScrollView>
-              <View style={styles.info}>
-                <Image
-                  style={styles.championship_image}
-                  source={details.image}
-                />
-                <Text>{details.name}</Text>
-                <Text style={styles.location}>
-                  {locations.find(o => o.id === details.location).name}
-                </Text>
-              </View>
-              <View style={styles.team}>
+            <View style={styles.info}>
+              <Image style={styles.championship_image} source={details.image} />
+              <Text>{details.name}</Text>
+              <Text style={styles.location}>
+                {locations.find(o => o.id === details.location).name}
+              </Text>
+            </View>
+            <View style={{flex: 1}}>
+              <ScrollView>
                 {teams.map((item, index) => (
                   <TeamCard item={item} key={index} />
                 ))}
-              </View>
+              </ScrollView>
+            </View>
 
-              <View style={styles.btnContainer}>
-                <Button
-                  title="Gioca"
-                  onPress={() =>
-                    navigation.navigate('Noticeboard', {
-                      id_championship: id_championship,
-                      players: players,
-                      locations: locations,
-                      details_: details,
-                    })
-                  }
-                />
-              </View>
-            </ScrollView>
+            <View style={styles.btnContainer}>
+              <Button
+                title="Gioca"
+                onPress={() =>
+                  navigation.navigate('Noticeboard', {
+                    id_championship: id_championship,
+                    players: players,
+                    locations: locations,
+                    details_: details,
+                  })
+                }
+              />
+            </View>
           </View>
         </>
       )}
@@ -125,12 +122,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     margin: '7%',
   },
-  team: {
-    marginBottom: '2%',
-    flexDirection: 'row',
+  team_card: {
     width: '90%',
-    alignSelf: 'center',
     borderRadius: 10,
+    alignSelf: 'center',
+    marginBottom: '2%',
+    flexDirection: 'column',
     paddingBottom: 70,
     position: 'relative',
     backgroundColor: '#c7e7ff',

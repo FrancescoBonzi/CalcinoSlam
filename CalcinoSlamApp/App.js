@@ -83,68 +83,72 @@ function HomeScreen({route, navigation}) {
     });
   }, [navigation]);
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
+    <View style={{flex: 1, justifyContent: 'center', height: '100%'}}>
       {players == null ||
       locations == null ||
       championshipInProgress == null ? (
         <ActivityIndicator />
       ) : (
         <>
-          <Text style={styles.header}>Calcino{'\n'}Slam</Text>
-          <Image style={styles.logo} source={require('./assets/logo.png')} />
-          <View style={styles.container}>
-            <TouchableOpacity
-              onPress={() => {
-                if (championshipInProgress.length > 0) {
-                  navigation.navigate('Noticeboard', {
-                    id_championship: championshipInProgress[0].id,
-                    players: players,
-                    locations: locations,
-                    initialDetails: null,
-                  });
-                } else {
-                  navigation.navigate('CreateChampionship', {
-                    players: players,
-                    locations: locations,
-                  });
-                }
-              }}>
-              <View style={styles.championship}>
-                <Text style={styles.text}>Campionato</Text>
-                <Image
-                  style={styles.championship_image}
-                  source={require('./assets/championship.png')}
-                />
-              </View>
-            </TouchableOpacity>
-
-            <View style={styles.bottom_cards}>
-              <View style={styles.bottom_container_left}>
+          <View style={{flex: 1, justifyContent: 'center', height: '100%'}}>
+            <Text style={styles.header}>Calcino{'\n'}Slam</Text>
+            <Image style={styles.logo} source={require('./assets/logo.png')} />
+            <View style={styles.container}>
+              <View style={styles.top_cards}>
                 <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('Players', {
-                      players: players,
-                    })
-                  }>
-                  <View style={styles.players}>
-                    <Text style={styles.text}>Giocatori</Text>
+                  onPress={() => {
+                    if (championshipInProgress.length > 0) {
+                      navigation.navigate('Noticeboard', {
+                        id_championship: championshipInProgress[0].id,
+                        players: players,
+                        locations: locations,
+                        initialDetails: null,
+                      });
+                    } else {
+                      navigation.navigate('CreateChampionship', {
+                        players: players,
+                        locations: locations,
+                      });
+                    }
+                  }}>
+                  <View style={styles.championship}>
+                    <Text style={styles.text}>Campionato</Text>
                     <Image
-                      style={styles.players_image}
-                      source={require('./assets/players.png')}
+                      style={styles.championship_image}
+                      source={require('./assets/championship.png')}
                     />
                   </View>
                 </TouchableOpacity>
               </View>
-              <View style={styles.bottom_container_right}>
-                <TouchableOpacity onPress={() => navigation.navigate('Chart')}>
-                  <View style={styles.chart}>
-                    <Text style={styles.text}>Classifica</Text>
-                    <Image
-                      style={styles.chart_image}
-                      source={require('./assets/chart.png')}
-                    />
-                  </View>
-                </TouchableOpacity>
+              <View style={styles.bottom_cards}>
+                <View style={styles.bottom_container_left}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('Players', {
+                        players: players,
+                      })
+                    }>
+                    <View style={styles.players}>
+                      <Text style={styles.text}>Giocatori</Text>
+                      <Image
+                        style={styles.players_image}
+                        source={require('./assets/players.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.bottom_container_right}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Chart')}>
+                    <View style={styles.chart}>
+                      <Text style={styles.text}>Classifica</Text>
+                      <Image
+                        style={styles.chart_image}
+                        source={require('./assets/chart.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
@@ -225,48 +229,61 @@ const styles = StyleSheet.create({
   header: {
     fontWeight: '700',
     fontSize: 60,
-    flex: 0.3,
+    flex: 0.4,
     left: '5%',
+    top: '10%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    //height: '40%',
   },
   container: {
-    flex: 0.5,
+    flex: 0.6,
     width: '90%',
+    //height: '60%',
     left: '5%',
   },
   championship: {
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    //justifyContent: 'flex-start',
     width: '100%',
-    height: 200,
-    marginBottom: '5%',
+    height: '100%',
+    //marginBottom: '5%',
     position: 'relative',
     backgroundColor: '#9cffb1', //'#baffc9', //'#ffccb5',
     borderRadius: 20,
   },
   championship_image: {
-    width: 130,
-    height: 130,
+    height: 100,
+    width: 100,
     position: 'absolute',
-    right: '7%',
-    bottom: '12%',
+    right: '10%',
+    bottom: '10%',
+  },
+  top_cards: {
+    width: '100%',
+    height: '47.5%',
+    marginBottom: '5%',
+    position: 'relative',
   },
   bottom_cards: {
     flexDirection: 'row',
     width: '100%',
+    height: '47.5%',
     position: 'relative',
   },
   players: {
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     width: '100%',
+    //height: '100%',
     aspectRatio: 1,
     position: 'relative',
     backgroundColor: '#c7e7ff', //'#bae1ff', //'#d4d7ff',
     borderRadius: 20,
   },
   players_image: {
-    width: 80,
-    height: 80,
+    width: '50%',
+    height: '50%',
     position: 'absolute',
     right: '10%',
     bottom: '10%',
@@ -275,6 +292,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     width: '100%',
+    //height: '100%',
     aspectRatio: 1,
     position: 'relative',
     backgroundColor: '#ffc7cc', //'#ffeed6',
@@ -282,28 +300,23 @@ const styles = StyleSheet.create({
   },
   bottom_container_left: {
     width: '48%',
+    height: '100%',
     marginBottom: '4%',
     marginRight: '4%',
     position: 'relative',
   },
   bottom_container_right: {
     width: '48%',
+    height: '100%',
     marginBottom: '4%',
     position: 'relative',
   },
   chart_image: {
-    width: 80,
-    height: 80,
-    position: 'absolute',
-    right: '10%',
-    bottom: '10%',
-  },
-  image: {
     width: '50%',
     height: '50%',
     position: 'absolute',
-    top: '15%',
-    left: '25%',
+    right: '10%',
+    bottom: '10%',
   },
   text: {
     color: '#513e76',

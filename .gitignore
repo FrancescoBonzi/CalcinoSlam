@@ -1,5 +1,6 @@
 node_modules
 data.db
 __tests__
-.vscode
+.vscode/
+.github/
 images/players
