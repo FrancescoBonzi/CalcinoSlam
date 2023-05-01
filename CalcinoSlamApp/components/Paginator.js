@@ -32,13 +32,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     height: 64,
-    marginBottom: 40,
+    //marginBottom: 20,
     marginTop: 20,
   },
   dot: {
     height: 10,
     borderRadius: 5,
     backgroundColor: '#493d8a',
-    marginHorizontal: 8,
+    marginHorizontal: 2,
   },
 });

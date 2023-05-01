@@ -42,7 +42,7 @@ export default function Chart({navigation}) {
   }, []);
 
   return (
-    <View style={{width: '100%', height: '100%', backgroundColor: '#ffc7cc'}}>
+    <View style={styles.chart}>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
@@ -73,6 +73,13 @@ const styles = StyleSheet.create({
   container: {
     width: '90%',
     left: '5%',
-    paddingBottom: '10%',
+    //paddingBottom: '10%',
+  },
+  chart: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#ffc7cc',
   },
 });
