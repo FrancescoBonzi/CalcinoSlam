@@ -9,9 +9,15 @@ import {
 import ChartItem from './ChartItem';
 import config from '../config';
 
-export default function Chart({navigation}) {
+export default function Chart({route, navigation}) {
+  const {players} = route.params;
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+
+  const handlePress = index => {
+    console.log('index: ' + index);
+    navigation.navigate('Players', {players: players, initialIndex: index});
+  };
 
   const getChart = async () => {
     try {
@@ -54,7 +60,12 @@ export default function Chart({navigation}) {
                 source={require('../assets/winner.png')}
               />
               {data.map((item, index) => (
-                <ChartItem key={index} item={item} index={index} />
+                <ChartItem
+                  key={index}
+                  item={item}
+                  index={index}
+                  onPress={() => handlePress(item.id_player - 1)}
+                />
               ))}
             </ScrollView>
           </View>

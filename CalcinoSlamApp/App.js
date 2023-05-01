@@ -126,6 +126,7 @@ function HomeScreen({route, navigation}) {
                     onPress={() =>
                       navigation.navigate('Players', {
                         players: players,
+                        initialIndex: 0,
                       })
                     }>
                     <View style={styles.players}>
@@ -139,7 +140,11 @@ function HomeScreen({route, navigation}) {
                 </View>
                 <View style={styles.bottom_container_right}>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Chart')}>
+                    onPress={() =>
+                      navigation.navigate('Chart', {
+                        players: players,
+                      })
+                    }>
                     <View style={styles.chart}>
                       <Text style={styles.text}>Classifica</Text>
                       <Image

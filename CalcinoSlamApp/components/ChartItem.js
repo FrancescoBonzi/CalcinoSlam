@@ -1,14 +1,28 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
 import getPlayerImages from '../playerImages';
 
-export default function ChartItem({item, index}) {
+export default function ChartItem({item, index, onPress}) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.position}>{index + 1}°</Text>
-      <Image style={styles.image} source={getPlayerImages(item.id_player)} />
-      <Text style={styles.username}>{item.username}</Text>
-      <Text style={styles.score}>{item.score}</Text>
+    <View>
+      <TouchableOpacity onPress={onPress}>
+        <View style={styles.container}>
+          <Text style={styles.position}>{index + 1}°</Text>
+          <Image
+            style={styles.image}
+            source={getPlayerImages(item.id_player)}
+          />
+          <Text style={styles.username}>{item.username}</Text>
+          <Text style={styles.score}>{item.score}</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }

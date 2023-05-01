@@ -1,12 +1,13 @@
 import React, {useState, useRef} from 'react';
-import {View, StyleSheet, FlatList, Image, Animated} from 'react-native';
+import {View, StyleSheet, FlatList, Image, Animated, useWindowDimensions} from 'react-native';
 import PlayersItem from './PlayersItem';
 import Paginator from './Paginator';
 
 export default function Players({route, navigation}) {
-  const {players} = route.params;
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const {players, initialIndex} = route.params;
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const scrollX = useRef(new Animated.Value(initialIndex)).current;
+  const {width} = useWindowDimensions();
   const slidesRef = useRef(null);
 
   const viewableItemsChanged = useRef(({viewableItems}) => {
@@ -33,6 +34,12 @@ export default function Players({route, navigation}) {
           ref={slidesRef}
           showsHorizontalScrollIndicator={false}
           keyExtractor={item => item.id}
+          getItemLayout={(data, index) => ({
+            length: width,
+            offset: width * index,
+            index,
+          })}
+          initialScrollIndex={currentIndex}
         />
       </View>
       <Paginator data={players} scrollX={scrollX} />
