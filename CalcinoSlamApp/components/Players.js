@@ -1,5 +1,12 @@
 import React, {useState, useRef} from 'react';
-import {View, StyleSheet, FlatList, Image, Animated, useWindowDimensions} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Image,
+  Animated,
+  useWindowDimensions,
+} from 'react-native';
 import PlayersItem from './PlayersItem';
 import Paginator from './Paginator';
 
